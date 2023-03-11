@@ -1,0 +1,8 @@
+prefix=/home/samuel/P1_Carrera_de_robots/devel
+
+Name: all_listeners
+Description: Description of all_listeners
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

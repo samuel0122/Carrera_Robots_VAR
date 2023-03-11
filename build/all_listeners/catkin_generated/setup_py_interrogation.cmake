@@ -1,0 +1,7 @@
+set(all_listeners_SETUP_PY_SETUP_MODULE "distutils.core")
+set(all_listeners_SETUP_PY_VERSION "0.0.0")
+set(all_listeners_SETUP_PY_SCRIPTS "")
+set(all_listeners_SETUP_PY_PACKAGES "all_listeners")
+set(all_listeners_SETUP_PY_PACKAGE_DIRS "src/all_listeners")
+set(all_listeners_SETUP_PY_MODULES "")
+set(all_listeners_SETUP_PY_MODULE_DIRS "")

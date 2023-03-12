@@ -1,56 +1,93 @@
+import tensorflow as tf
 import numpy as np
-from sklearn.utils import resample
 
-def binaryUndersampling():
-    # Define a dataset with imbalanced classes
-    X = np.array([[0, 1], [1, 1], [0, 1], [1, 0], [0, 1], [0, 0], [1, 1]])
-    y = np.array([0, 1, 0, 0, 0, 1, 1])
+def create_model(inputs, outputs):
+    """
+    BUILD KERAS MODEL USING FUNCTIONAL API
+    """
+    # Inputs layer
+    input_layer = tf.keras.layers.Input(inputs)
 
-    # Separate the samples in each class
-    X_class0 = X[y == 0]
-    X_class1 = X[y == 1]
+    # Hidden layers
+    to_output_layer = tf.keras.layers.Dense(5, activation="relu")(input_layer)
 
-    # Undersample the majority class
-    n_samples0 = len(X_class0)
-    n_samples1 = len(X_class1)
+    # Output layer
+    output_layer = tf.keras.layers.Dense(outputs, activation="softmax")(to_output_layer)
 
-    n_samples = min(n_samples0, n_samples1)
-
-    if(n_samples1 < n_samples0):
-        X_class0 = resample(X_class0, n_samples=n_samples, replace=False)
-    else:
-        X_class1 = resample(X_class1, n_samples=n_samples, replace=False)
-
-    # Combine the undersampled majority class with the minority class
-    X_undersampled = np.vstack((X_class0, X_class1))
-    y_undersampled = np.concatenate(([0] * n_samples, [1] * n_samples))
-
-    # Print the balanced dataset
-    print(X_undersampled)
-    print(y_undersampled)
-
-from imblearn.under_sampling import RandomUnderSampler
-from sklearn.datasets import make_classification
-
-# Create a synthetic dataset with imbalanced classes
-X = np.array([[0, 1], [1, 1], [0, 1], [1, 0], [0, 1], [0, 0], [1, 1]])
-y = np.array([0, 1, 0, 0, 0, 1, 1])
-
-# Create an undersampler to balance the classes
-undersampler = RandomUnderSampler(sampling_strategy='not minority')
-
-# Resample the dataset
-X_resampled, y_resampled = undersampler.fit_resample(X, y)
-
-# Print the class distribution before and after resampling
-print('Original dataset shape:', X.shape)
-print('Original class distribution:', {i: sum(y == i) for i in set(y)})
-print('Resampled dataset shape:', X_resampled.shape)
-print('Resampled class distribution:', {i: sum(y_resampled == i) for i in set(y_resampled)})
+    return tf.keras.Model(inputs=input_layer, outputs=output_layer)
 
 
-pp = [[1,2], [2,3], [3,4]]
-ppp = [4, 5, 6, [4, 5]]
-pp.extend(ppp)
+def mutateWeights(model_weights, mutation_rate, mutation_range):
+    """
+        ### Generate a new child by mutating the model's parameters
+    """
+    mutation = lambda weight: weight + np.random.uniform(-mutation_range, mutation_range, size=weight.shape)
 
-print(pp)
+    return [mutation(weight=weight) if np.random.uniform() < mutation_rate else weight for weight in model_weights]
+
+def crossover_models_weight(model1_weights, model2_weights, crossover_rate):
+    """
+        ### Cross-Over boths weights.
+
+        crossover_rate indicates how much probability there is to keep the first model's weight
+    """
+    # Cross-over both weights
+    crossover_weight = lambda weight1, weight2: weight1 if np.random.uniform() < crossover_rate else weight2
+
+    return [crossover_weight(weight1=weight1, weight2=weight2) for weight1, weight2 in zip(model1_weights, model2_weights)]
+
+# Define a simple TensorFlow model with two dense layers
+model1 = tf.keras.models.Sequential([
+    tf.keras.layers.Dense(units=64, activation='relu', input_shape=(784,)),
+    tf.keras.layers.Dense(units=10, activation='softmax')
+])
+
+model1 = create_model(5, 3)
+model2 = create_model(5, 3)
+model3 = create_model(5, 3)
+
+# Compile the model with a categorical cross-entropy loss and an Adam optimizer
+model1.compile(loss='categorical_crossentropy', optimizer='adam')
+model2.compile(loss='categorical_crossentropy', optimizer='adam')
+model3.compile(loss='categorical_crossentropy', optimizer='adam')
+
+# Retrieve the current values of the model's trainable parameters
+weights = model1.get_weights()
+
+print('Original')
+for i in model1.get_weights():
+    print(i)
+
+print('Copy')
+for i in copyModel.get_weights():
+    print(i)
+
+# Define the mutation rate and range
+mutation_rate = 0.1
+mutation_range = 0.01
+
+print('Mutating...')
+
+# Generate a new child by mutating the model's parameters
+for i in range(len(weights)):
+    if np.random.uniform() < mutation_rate:
+        weights[i] += np.random.uniform(-mutation_range, mutation_range, size=weights[i].shape)
+
+# Set the model's parameters to the new values
+model1.set_weights(weights)
+
+print('Original')
+for i in model1.get_weights():
+    print(i)
+
+print('Copy')
+for i in copyModel.get_weights():
+    print(i)
+
+# Evaluate the fitness of the new child on a validation dataset
+# (x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+# x_test = x_test.reshape(10000, 784) / 255.0
+# y_test = tf.keras.utils.to_categorical(y_test, num_classes=10)
+# loss = model.evaluate(x_test, np.asarray(y_test))
+# print('Validation loss:', loss)
+# print('Validation accuracy:', accuracy)

@@ -74,7 +74,14 @@ class Wander:
     def command_callback(self, msg: LaserScan):
 
         rospy.loginfo(f'Scan message recieved with {len(msg.ranges)} ranges')
-        
+
+        scannnerData = [msg.ranges[0], msg.ranges[60], msg.ranges[-60], msg.ranges[120], msg.ranges[-120]]
+        scannnerData = [num if num < 5 else 5.0 for num in scannnerData]
+
+        print()
+        print(scannnerData)
+        print()
+
         # Process laser 
         minDistances  = len([True for range in msg.ranges[ :30] if range < self.laserMinDistance])
         minDistances += len([True for range in msg.ranges[-30:] if range < self.laserMinDistance])
@@ -89,8 +96,8 @@ class Wander:
             cmd = Twist() 
 
             # Edit message
-            cmd.linear.x = 0.2  
-            cmd.angular.z = 0.3
+            # cmd.linear.x = 0.2  
+            # cmd.angular.z = 0.3
 
             # Publish message
             self.command_pub.publish(cmd)

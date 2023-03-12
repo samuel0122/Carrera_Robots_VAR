@@ -21,19 +21,21 @@ class Wander:
         self.laserWallCrashPatiente = 15
         self.laserMinDistance = 0.2
         
+        # Odometry
         self.odom_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback)
+        self.xMax, self.yMax = -math.inf, -math.inf
+        self.xMin, self.yMin =  math.inf,  math.inf
+        self.initialX, self.initialY, self.initialZ = -6.5, 8.5, 0.2
 
+        # Video sub
         displayVideo = False
+        self.image_sub = None
 
         if displayVideo:
             self.initializeRGB()
-            self.video_sub = rospy.Subscriber('/camera/rgb/image_raw', Image, self.imageRGB_callback)
 
-        
-
-        # Default forward
-        self.forward_vel = None
-        self.rotate_vel = None
+        self.forward_vel = 0
+        self.rotate_vel = 0
         self.categoricalOutput = None
         
         self.odometryX = None
@@ -44,12 +46,25 @@ class Wander:
 
         self.keyInserted = 'w'
 
-        # Get the paths of the saved models (if any passed)
+        # Controlled by AI
+        self.controlledByOneAI = False
         self.controlledByAI = controlledByAI
+        self.modelAI = None
+        self.modelLeft = None
+        self.modelRight = None
+        self.modelForward = None
+
+        # Get one AI
+        if self.controlledByOneAI:
+            self.modelAI = keras.models.load_model('/home/samuel/P1_Carrera_de_robots/best_model.h5')
+
+        # Get the paths of the saved models (if any passed)
         if self.controlledByAI:
             self.modelLeft = keras.models.load_model(pathSavedModelLeft)
             self.modelRight = keras.models.load_model(pathSavedModelRight)
             self.modelForward = keras.models.load_model(pathSavedModelForward)
+
+            
 
         # If set to save information
         self.saveInformation = writeSensorInformation
@@ -61,18 +76,13 @@ class Wander:
             if overridePreviousWriteFile:
                 with open(self.fileName, 'w') as f:
                     f.write('sensor0;sensor1;sensor2;sensor3;sensor4;left;up;right\n')
-        
-        # print()
-        # print('Waiting 5 seconds...')
-        # print()
-        # time.sleep(5)
-        print('GO!')
-        # self.initializeRGB()
+
 
     def __del__(self):
         if self.image_sub is not None:
             cv2.destroyAllWindows()
-    
+
+
     def getKeyPressed(self):
         """
             Looks at the key that the played had pressed
@@ -89,30 +99,56 @@ class Wander:
         elif self.keyInserted == 'w':
             self.forward_vel, self.rotate_vel = 0.5, 0
             self.categoricalOutput = [0.0, 1.0, 0.0]
-    
+
+
     def getAIKey(self):
         """
             Asks the models to choose a key
         """
-        predictLeft = self.modelLeft.predict(self.scannnerData)
-        predictRight = self.modelRight.predict(self.scannnerData)
-        predictForward = self.modelForward.predict(self.scannnerData)
 
-        if np.argmax(predictLeft) == 1:
-            self.forward_vel, self.rotate_vel = 0.2, 0.5
-            self.categoricalOutput = [1.0, 0.0, 0.0]
+        if self.controlledByOneAI:
+            if self.modelAI is None:
+                return
+            
+            predict = self.modelAI.predict([self.scannnerData])
+            move = np.argmax(predict, axis=1)
+            if move[0] == 0:
+                # Left
+                self.forward_vel, self.rotate_vel = 0.2, 0.5
+                self.categoricalOutput = [1.0, 0.0, 0.0]
+            if move[0] == 2:
+                # Right
+                self.forward_vel, self.rotate_vel = 0.2, -0.5
+                self.categoricalOutput = [0.0, 0.0, 1.0]
+            if move[0] == 1:
+                # Forward
+                self.forward_vel, self.rotate_vel = 0.5, 0
+                self.categoricalOutput = [0.0, 1.0, 0.0]
+        else:
+            if self.modelLeft is None or self.modelRight is None or self.modelForward is None:
+                return
+            
+            predictLeft = self.modelLeft.predict(self.scannnerData)
+            predictRight = self.modelRight.predict(self.scannnerData)
+            predictForward = self.modelForward.predict(self.scannnerData)
 
-        elif np.argmax(predictRight) == 1:
-            self.forward_vel, self.rotate_vel = 0.2, -0.5
-            self.categoricalOutput = [0.0, 0.0, 1.0]
+            if np.argmax(predictLeft) == 1:
+                self.forward_vel, self.rotate_vel = 0.2, 0.5
+                self.categoricalOutput = [1.0, 0.0, 0.0]
 
-        elif np.argmax(predictForward) == 1:
-            self.forward_vel, self.rotate_vel = 0.5, 0
-            self.categoricalOutput = [0.0, 1.0, 0.0]
+            elif np.argmax(predictRight) == 1:
+                self.forward_vel, self.rotate_vel = 0.2, -0.5
+                self.categoricalOutput = [0.0, 0.0, 1.0]
+
+            elif np.argmax(predictForward) == 1:
+                self.forward_vel, self.rotate_vel = 0.5, 0
+                self.categoricalOutput = [0.0, 1.0, 0.0]
+
 
     def checkNumberOfScansColliding(self, msg: LaserScan):
         return sum(self.laserMinDistance > range for range in msg.range[:30]) + sum(self.laserMinDistance > range for range in msg.range[-30:])
         # return len([True for range in msg.ranges[ :30] if range < self.laserMinDistance]) + len([True for range in msg.ranges[-30:] if range < self.laserMinDistance])
+
 
     def getScanValues(self, msg: LaserScan):
         """
@@ -166,11 +202,15 @@ class Wander:
             Reads the scanner and sends the robot's speed
         """
 
+        if self.checkNumberOfScansColliding(msg) > self.laserWallCrashPatiente:
+            rospy.logerr("COLLIDING")
+            return
+
         # Get the scan values
         self.getScanValues(msg)
 
         # Get the key pressed or ask the AI to choose a key
-        if self.controlledByAI:
+        if self.controlledByAI or self.controlledByOneAI:
             self.getAIKey()
         else:
             self.getKeyPressed()
@@ -191,9 +231,18 @@ class Wander:
     def odom_callback(self, msg: Odometry):
 
         # Keep odometry data     
-        self.odometryX = msg.pose.pose.position.x
-        self.odometryY = msg.pose.pose.position.y
+        newX = msg.pose.pose.position.x
+        newY = msg.pose.pose.position.y
+        
+        if newX < self.xMin:
+            self.xMin = newX
+        if newX > self.xMax:
+            self.xMax = newX
 
+        if newY < self.yMin:
+            self.yMin = newY
+        if newY > self.yMax:
+            self.yMax = newY
 
 
     def initializeRGB(self):
@@ -229,5 +278,5 @@ if __name__ == '__main__':
     rospy.init_node('all_listeners')
 
     # TODO: insert the AI
-    wand = Wander(writeSensorInformation = True, controlledByAI = False, pathSavedModelLeft = None, pathSavedModelRight = None, pathSavedModelForward = None)
+    wand = Wander(writeSensorInformation = False, controlledByAI = False, pathSavedModelLeft = None, pathSavedModelRight = None, pathSavedModelForward = None)
     wand.loop()

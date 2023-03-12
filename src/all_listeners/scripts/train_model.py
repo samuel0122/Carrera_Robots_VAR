@@ -1,3 +1,6 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 import tensorflow as tf
 from tensorflow import keras
 from keras import layers
@@ -9,14 +12,23 @@ import matplotlib.pyplot as plt
 from collections import Counter
 from imblearn.under_sampling import RandomUnderSampler
 from imblearn.over_sampling import SMOTE
+from keras.utils import to_categorical
 
-def get_csv_data(file, inputs):
+def convertOneHotEncodedLabelsToDecimal(y):
+
+    return np.argmax(y, axis=1)
+    
+
+def convertDecimalLabelsToOneHotEncoded(y, nb_classes):
+    return to_categorical(y, nb_classes)
+
+def get_csv_data(file, nb_classes):
     # Read CSV file
-    data = pd.read_csv('/home/samuel/P1_Carrera_de_robots/src/' + file, sep=";")
+    data = pd.read_csv(file, sep=";")
 
     # Split data into inputs and outputs
-    inputData = data.iloc[:, :inputs].values
-    outputs = data.iloc[:, inputs:].values
+    inputData = data.iloc[:, :-nb_classes].values
+    outputs = data.iloc[:, -nb_classes:].values
     
     return inputData, outputs
 
@@ -29,10 +41,13 @@ def create_model(inputs, outputs):
     input_layer = layers.Input(inputs)
 
     # Hidden layers
-    dense_layer1 = layers.Dense(256, activation="relu")(input_layer)
+
+    dense_layer1 = layers.Dense(512, activation="relu")(input_layer)
+    drop_out1 = layers.Dropout(0.3)(dense_layer1)
+    dense_layer1 = layers.Dense(256, activation="relu")(drop_out1)
     drop_out1 = layers.Dropout(0.3)(dense_layer1)
     dense_layer2 = layers.Dense(128, activation="relu")(drop_out1)
-    drop_out2 = layers.Dropout(0.3)(dense_layer2)
+    drop_out2 = layers.Dropout(0.2)(dense_layer2)
     dense_layer3 = layers.Dense(64, activation="relu")(drop_out2)
     
     # Output layer
@@ -42,11 +57,22 @@ def create_model(inputs, outputs):
 
 
 def undersampleDataset(X, y):
+    labelsIsOneHotEncoded = y[0] is list
+
     # Create an undersampler to balance the classes
     undersampler = RandomUnderSampler(sampling_strategy='not minority')
 
+    if labelsIsOneHotEncoded:
+        # Pass to categorical
+        nb_classes = len(y[0])
+        y = convertOneHotEncodedLabelsToDecimal(y)
+
     # Resample the dataset
     X_resampled, y_resampled = undersampler.fit_resample(X, y)
+
+    if labelsIsOneHotEncoded:
+        # Pass to categorical
+        y_resampled = convertDecimalLabelsToOneHotEncoded(y_resampled, nb_classes)
 
     return X_resampled, y_resampled
 
@@ -73,14 +99,16 @@ def countNumberOfEachClass(one_hot_labels):
     for number in counts:
         print(f'There a total of {counts[number]} elements of class {number}')
 
+def appendDirectoriesToFileNames(fileNames, directory):
+    return [directory+file for file in fileNames]
 
-def getDataset(file, inputs, trainTestSplit, undersample = False):
+def getDataset(file, nb_classes, trainTestSplit, undersample = False):
 
     print('Loading dataset...')
-    X, y = get_csv_data(file=file, inputs=inputs)
+    X, y = get_csv_data(file=file, nb_classes=nb_classes)
 
     if undersample:
-        X, y = oversampleDataset(X, y)
+        X, y = undersampleDataset(X, y)
 
     numberElements = len(X)
     indexes = list(range(numberElements))
@@ -97,7 +125,8 @@ def getDataset(file, inputs, trainTestSplit, undersample = False):
 
 def train(model, x_train, y_train, batch, epoch, val_split):
 
-    print('Training...')
+
+    print(f'Training with {x_train.shape} examples and {y_train.shape} labels...')
     
     # Compile the model
     model.compile(optimizer='adam',
@@ -106,7 +135,7 @@ def train(model, x_train, y_train, batch, epoch, val_split):
 
     # Train the model with validation data    
     # early_stopping = EarlyStopping(monitor='val_loss', patience=20)
-    checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath='/home/samuel/P1_Carrera_de_robots/src/best_model.h5', save_best_only=True, monitor='accuracy', mode='max')
+    checkpoint_callback = tf.keras.callbacks.ModelCheckpoint(filepath='/home/samuel/P1_Carrera_de_robots/best_model.h5', save_best_only=True, monitor='accuracy', mode='max')
     history = model.fit(x_train, y_train, batch_size=batch, epochs=epoch, validation_split=val_split, verbose=0, callbacks=[checkpoint_callback])
 
     # Evaluate the model on the test data
@@ -114,6 +143,7 @@ def train(model, x_train, y_train, batch, epoch, val_split):
     return model, history
 
 def evaluate(model, x_test, y_test):
+
     print('Evaluating...')
     test_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)
     print('Test accuracy:', test_acc)
@@ -140,19 +170,34 @@ def printHistory(history):
     plt.legend(['train', 'test'], loc='upper left')
     plt.show()
 
-
-fileName = 'datos1.csv'
+doTraining = False
+directorySaved = '/home/samuel/P1_Carrera_de_robots/'
+filesNames5 = ['datos5_1.csv', 'datos5_2.csv', 'datos5_3.csv', 'datos5_4.csv', 'datos5_5.csv', 'datos5_6.csv']
+filesNamesE2 = ['datosE2_3.csv', 'datosE2_4.csv', 'datosE2_5.csv', 'datosE2_6.csv']
+filesNamesE5 = ['datosE5_3.csv', 'datosE5_4.csv', 'datosE5_5.csv', 'datosE5_6.csv']
+filesNames5 = appendDirectoriesToFileNames(fileNames=filesNames5, directory=directorySaved)
+filesNamesE2 = appendDirectoriesToFileNames(fileNames=filesNamesE2, directory=directorySaved)
+filesNamesE5 = appendDirectoriesToFileNames(fileNames=filesNamesE5, directory=directorySaved)
 trainTestSplit = 0.85
-netInputs = 5
-
 nb_classes = 3
 
 random.seed(0)
 
-# Get dataset
-(x_train, y_train), (x_test, y_test) = getDataset(file=fileName, inputs=netInputs, trainTestSplit=trainTestSplit)
+(x_train, y_train), (x_test, y_test) = ([], []), ([], [])
 
-# x_train, y_train = oversampleDataset(x_train, y_train)
+# Get dataset
+for fileName in filesNamesE2:
+    (x_tr, y_tr), (x_tst, y_tst) = getDataset(file=fileName, nb_classes=nb_classes, trainTestSplit=trainTestSplit, undersample=True)
+    x_train.extend(x_tr)
+    y_train.extend(y_tr)
+    x_test.extend(x_tst)
+    y_test.extend(y_tst)
+
+# x_train, y_train = undersampleDataset(x_train, y_train)
+# (x_train, y_train), (x_test, y_test) = getDataset(file=filesNames5[0], inputs=netInputs, trainTestSplit=trainTestSplit)
+
+x_train, y_train = np.asarray(x_train), np.asarray(y_train)
+x_test, y_test = np.asarray(x_test), np.asarray(y_test)
 
 print('Count train:')
 countNumberOfEachClass(y_train)
@@ -160,14 +205,22 @@ countNumberOfEachClass(y_train)
 print('Count test:')
 countNumberOfEachClass(y_test)
 
-# Generate model
-model = create_model(inputs=netInputs, outputs=nb_classes)
+if doTraining:
+    netInputs = len(x_train[0])
 
-# Train the model
-model, hist = train(model=model, x_train=x_train, y_train=y_train, batch=16, epoch=50, val_split=0.99)
+    # Generate model
+    model = create_model(inputs=netInputs, outputs=nb_classes)
 
-# Evaluate the model
-evaluate(x_test=x_test, y_test=y_test, model=model)
+    # Train the model
+    model, hist = train(model=model, x_train=x_train, y_train=y_train, batch=16, epoch=100, val_split=0.95)
 
-# Print history
-printHistory(hist)
+    # Evaluate the model
+    evaluate(x_test=x_test, y_test=y_test, model=model)
+
+    # Print history
+    printHistory(hist)
+
+else:
+    model = keras.models.load_model(directorySaved + 'best_model.h5')
+    prediction = model.predict(x_train[0:10])
+    print(f'Prediction: {convertOneHotEncodedLabelsToDecimal(prediction)}, actual: {convertOneHotEncodedLabelsToDecimal(y_train[:10])}')

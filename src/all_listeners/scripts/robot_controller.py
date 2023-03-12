@@ -6,6 +6,7 @@ import math
 from nav_msgs.msg import Odometry
 from tensorflow import keras
 import numpy as np
+import time
 
 import cv2
 from cv_bridge import CvBridge
@@ -21,6 +22,14 @@ class Wander:
         self.laserMinDistance = 0.2
         
         self.odom_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback)
+
+        displayVideo = False
+
+        if displayVideo:
+            self.initializeRGB()
+            self.video_sub = rospy.Subscriber('/camera/rgb/image_raw', Image, self.imageRGB_callback)
+
+        
 
         # Default forward
         self.forward_vel = None
@@ -45,14 +54,19 @@ class Wander:
         # If set to save information
         self.saveInformation = writeSensorInformation
         if self.saveInformation:
-            self.fileName = "/home/samuel/P1_Carrera_de_robots/src/datos.csv"
-            self.fileNameEvery2 = "/home/samuel/P1_Carrera_de_robots/src/datosE2.csv"
-            self.fileNameEvery5 = "/home/samuel/P1_Carrera_de_robots/src/datosE5.csv"
+            self.fileName = "/home/samuel/P1_Carrera_de_robots/datos5_.csv"
+            self.fileNameEvery2 = "/home/samuel/P1_Carrera_de_robots/datosE2.csv"
+            self.fileNameEvery5 = "/home/samuel/P1_Carrera_de_robots/datosE5.csv"
 
             if overridePreviousWriteFile:
                 with open(self.fileName, 'w') as f:
                     f.write('sensor0;sensor1;sensor2;sensor3;sensor4;left;up;right\n')
         
+        # print()
+        # print('Waiting 5 seconds...')
+        # print()
+        # time.sleep(5)
+        print('GO!')
         # self.initializeRGB()
 
     def __del__(self):
@@ -208,7 +222,8 @@ class Wander:
             # Otherwise, if the robot is controlled by the player, recieve keyboard's inputs
             while not rospy.is_shutdown():
                 value = input()
-                self.keyInserted = value[0]
+                if len(value) > 0:
+                    self.keyInserted = value[0]
 
 if __name__ == '__main__':
     rospy.init_node('all_listeners')

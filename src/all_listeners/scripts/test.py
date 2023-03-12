@@ -47,3 +47,10 @@ print('Original dataset shape:', X.shape)
 print('Original class distribution:', {i: sum(y == i) for i in set(y)})
 print('Resampled dataset shape:', X_resampled.shape)
 print('Resampled class distribution:', {i: sum(y_resampled == i) for i in set(y_resampled)})
+
+
+pp = [[1,2], [2,3], [3,4]]
+ppp = [4, 5, 6, [4, 5]]
+pp.extend(ppp)
+
+print(pp)

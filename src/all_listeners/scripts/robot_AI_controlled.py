@@ -182,5 +182,8 @@ if __name__ == '__main__':
     rospy.init_node('AI_robot_controlled')
 
     # TODO: insert the AI
-    wand = Wander(controlledByOneAI = True)
+    wand = Wander(False,
+                  '/home/ljmt/Escritorio/VAR/Carrera_Robots_VAR/src/all_listeners/models/left_model.pkl',
+                  '/home/ljmt/Escritorio/VAR/Carrera_Robots_VAR/src/all_listeners/models/right_model.pkl',
+                  '/home/ljmt/Escritorio/VAR/Carrera_Robots_VAR/src/all_listeners/models/up_model.pkl')
     wand.loop()

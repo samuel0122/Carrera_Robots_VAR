@@ -7,4 +7,5 @@
 # new environment variables
 
 # modified environment variables
-export PWD='/home/samuel/P1_Carrera_de_robots/build'
+export PWD='/home/samuel/Carrera_Robots_VAR/build'
+export ROS_PACKAGE_PATH='/home/samuel/P1_Carrera_de_robots/src:/home/samuel/Carrera_Robots_VAR/src:/opt/ros/noetic/share'

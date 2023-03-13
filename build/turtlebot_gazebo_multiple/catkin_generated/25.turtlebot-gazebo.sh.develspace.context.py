@@ -2,7 +2,7 @@
 DEVELSPACE = True
 INSTALLSPACE = False
 
-CATKIN_DEVEL_PREFIX = '/home/samuel/P1_Carrera_de_robots/devel'
+CATKIN_DEVEL_PREFIX = '/home/samuel/Carrera_Robots_VAR/devel'
 
 CATKIN_GLOBAL_BIN_DESTINATION = 'bin'
 CATKIN_GLOBAL_ETC_DESTINATION = 'etc'
@@ -20,14 +20,14 @@ CATKIN_PACKAGE_LIBEXEC_DESTINATION = 'lib/turtlebot_gazebo_multiple'
 CATKIN_PACKAGE_PYTHON_DESTINATION = 'lib/python3/dist-packages/turtlebot_gazebo_multiple'
 CATKIN_PACKAGE_SHARE_DESTINATION = 'share/turtlebot_gazebo_multiple'
 
-CMAKE_BINARY_DIR = '/home/samuel/P1_Carrera_de_robots/build'
-CMAKE_CURRENT_BINARY_DIR = '/home/samuel/P1_Carrera_de_robots/build/turtlebot_gazebo_multiple'
-CMAKE_CURRENT_SOURCE_DIR = '/home/samuel/P1_Carrera_de_robots/src/turtlebot_gazebo_multiple'
-CMAKE_INSTALL_PREFIX = '/home/samuel/P1_Carrera_de_robots/install'
-CMAKE_SOURCE_DIR = '/home/samuel/P1_Carrera_de_robots/src'
+CMAKE_BINARY_DIR = '/home/samuel/Carrera_Robots_VAR/build'
+CMAKE_CURRENT_BINARY_DIR = '/home/samuel/Carrera_Robots_VAR/build/turtlebot_gazebo_multiple'
+CMAKE_CURRENT_SOURCE_DIR = '/home/samuel/Carrera_Robots_VAR/src/turtlebot_gazebo_multiple'
+CMAKE_INSTALL_PREFIX = '/home/samuel/Carrera_Robots_VAR/install'
+CMAKE_SOURCE_DIR = '/home/samuel/Carrera_Robots_VAR/src'
 
 PROJECT_NAME = 'turtlebot_gazebo_multiple'
-PROJECT_BINARY_DIR = '/home/samuel/P1_Carrera_de_robots/build/turtlebot_gazebo_multiple'
-PROJECT_SOURCE_DIR = '/home/samuel/P1_Carrera_de_robots/src/turtlebot_gazebo_multiple'
+PROJECT_BINARY_DIR = '/home/samuel/Carrera_Robots_VAR/build/turtlebot_gazebo_multiple'
+PROJECT_SOURCE_DIR = '/home/samuel/Carrera_Robots_VAR/src/turtlebot_gazebo_multiple'
 
 PYTHON_EXECUTABLE = '/usr/bin/python3'

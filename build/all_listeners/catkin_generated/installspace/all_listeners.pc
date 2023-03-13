@@ -1,4 +1,4 @@
-prefix=/home/samuel/P1_Carrera_de_robots/install
+prefix=/home/samuel/Carrera_Robots_VAR/install
 
 Name: all_listeners
 Description: Description of all_listeners

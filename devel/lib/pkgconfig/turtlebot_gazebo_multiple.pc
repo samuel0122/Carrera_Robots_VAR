@@ -1,4 +1,4 @@
-prefix=/home/samuel/P1_Carrera_de_robots/devel
+prefix=/home/samuel/Carrera_Robots_VAR/devel
 
 Name: turtlebot_gazebo_multiple
 Description: Description of turtlebot_gazebo_multiple

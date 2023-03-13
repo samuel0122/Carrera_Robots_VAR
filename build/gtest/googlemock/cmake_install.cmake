@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/samuel/P1_Carrera_de_robots/install")
+  set(CMAKE_INSTALL_PREFIX "/home/samuel/Carrera_Robots_VAR/install")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -39,7 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/home/samuel/P1_Carrera_de_robots/build/gtest/googletest/cmake_install.cmake")
+  include("/home/samuel/Carrera_Robots_VAR/build/gtest/googletest/cmake_install.cmake")
 
 endif()
 

@@ -13,21 +13,21 @@ fi
 
 echo_and_run() { echo "+ $@" ; "$@" ; }
 
-echo_and_run cd "/home/samuel/P1_Carrera_de_robots/src/all_listeners"
+echo_and_run cd "/home/samuel/Carrera_Robots_VAR/src/all_listeners"
 
 # ensure that Python install destination exists
-echo_and_run mkdir -p "$DESTDIR/home/samuel/P1_Carrera_de_robots/install/lib/python3/dist-packages"
+echo_and_run mkdir -p "$DESTDIR/home/samuel/Carrera_Robots_VAR/install/lib/python3/dist-packages"
 
 # Note that PYTHONPATH is pulled from the environment to support installing
 # into one location when some dependencies were installed in another
 # location, #123.
 echo_and_run /usr/bin/env \
-    PYTHONPATH="/home/samuel/P1_Carrera_de_robots/install/lib/python3/dist-packages:/home/samuel/P1_Carrera_de_robots/build/lib/python3/dist-packages:$PYTHONPATH" \
-    CATKIN_BINARY_DIR="/home/samuel/P1_Carrera_de_robots/build" \
+    PYTHONPATH="/home/samuel/Carrera_Robots_VAR/install/lib/python3/dist-packages:/home/samuel/Carrera_Robots_VAR/build/lib/python3/dist-packages:$PYTHONPATH" \
+    CATKIN_BINARY_DIR="/home/samuel/Carrera_Robots_VAR/build" \
     "/usr/bin/python3" \
-    "/home/samuel/P1_Carrera_de_robots/src/all_listeners/setup.py" \
+    "/home/samuel/Carrera_Robots_VAR/src/all_listeners/setup.py" \
      \
-    build --build-base "/home/samuel/P1_Carrera_de_robots/build/all_listeners" \
+    build --build-base "/home/samuel/Carrera_Robots_VAR/build/all_listeners" \
     install \
     --root="${DESTDIR-/}" \
-    --install-layout=deb --prefix="/home/samuel/P1_Carrera_de_robots/install" --install-scripts="/home/samuel/P1_Carrera_de_robots/install/bin"
+    --install-layout=deb --prefix="/home/samuel/Carrera_Robots_VAR/install" --install-scripts="/home/samuel/Carrera_Robots_VAR/install/bin"

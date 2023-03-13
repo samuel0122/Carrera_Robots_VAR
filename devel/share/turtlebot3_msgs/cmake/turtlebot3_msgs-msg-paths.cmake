@@ -1,4 +1,4 @@
 # generated from genmsg/cmake/pkg-msg-paths.cmake.develspace.in
 
-set(turtlebot3_msgs_MSG_INCLUDE_DIRS "/home/samuel/P1_Carrera_de_robots/src/turtlebot3_msgs/msg")
+set(turtlebot3_msgs_MSG_INCLUDE_DIRS "/home/samuel/Carrera_Robots_VAR/src/turtlebot3_msgs/msg")
 set(turtlebot3_msgs_MSG_DEPENDENCIES std_msgs)

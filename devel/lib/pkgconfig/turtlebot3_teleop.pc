@@ -1,4 +1,4 @@
-prefix=/home/samuel/P1_Carrera_de_robots/devel
+prefix=/home/samuel/Carrera_Robots_VAR/devel
 
 Name: turtlebot3_teleop
 Description: Description of turtlebot3_teleop

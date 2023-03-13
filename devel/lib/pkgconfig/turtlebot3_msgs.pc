@@ -1,8 +1,8 @@
-prefix=/home/samuel/P1_Carrera_de_robots/devel
+prefix=/home/samuel/Carrera_Robots_VAR/devel
 
 Name: turtlebot3_msgs
 Description: Description of turtlebot3_msgs
 Version: 1.0.1
-Cflags: -I/home/samuel/P1_Carrera_de_robots/devel/include
+Cflags: -I/home/samuel/Carrera_Robots_VAR/devel/include
 Libs: -L${prefix}/lib 
 Requires: std_msgs message_runtime

@@ -34,15 +34,16 @@ class bcolors:
 
 
 # CONSTANTS
-CHECK_EVERY_SECONDS = 10
-MINIMUM_DISTANCE_DIFFERENCE = 2.0
+CHECK_EVERY_SECONDS = 20
+MINIMUM_DISTANCE_DIFFERENCE = 1.0
 LATER_WALL_CRASH_PATIENTE = 15
 LASER_MAX_DISTANCE = 5.0
 LASER_MIN_DISTANCE = 0.2
 INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -6.5, 8.5, 0.2
-SAVE_DIRECTORY = '/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/'
+STATES_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/states/'
+STATESLIST_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/statesLists/'
 
-
+SAVE_STATE_EVERY_GENERATIONS = 15
 
 def create_model(inputs, outputs):
     """
@@ -171,7 +172,7 @@ class Wander:
         time.sleep(0.5)
         spawnPub.unregister()
 
-        print('TurtleBot spawned!')
+        # print('TurtleBot spawned!')
     
     def getAreaRun(self):
         xMoved = abs(self.xMax - self.xMin)
@@ -206,9 +207,9 @@ class Wander:
         predict = self.modelAI.predict([self.scannerData], verbose=0)
         move = np.argmax(predict, axis=1)[0]
         if   move == 0:   # Left
-            self.forward_vel, self.rotate_vel = 0.2, 0.5
+            self.forward_vel, self.rotate_vel = 0.3, 0.5
         elif move == 2:   # Right
-            self.forward_vel, self.rotate_vel = 0.2, -0.5
+            self.forward_vel, self.rotate_vel = 0.3, -0.5
         elif move == 1:   # Forward
             self.forward_vel, self.rotate_vel = 0.5, 0
 
@@ -327,7 +328,7 @@ class Wander:
         if model_name is None:
             model_name = f'modelAI_{int(self.getTimeAlive())}_{int(self.getAreaRun())}.h5'
         
-        fileSave = SAVE_DIRECTORY + model_name
+        fileSave = STATES_SAVE_DIRECTORY + model_name
         self.modelAI.save(fileSave)
 
         return fileSave
@@ -367,18 +368,19 @@ class Population:
     MUTATION_RANGE = 0.01
     MUTATION_RATE  = 0.1
     CROSSOVER_RATE = 0.5
+    GenVersion = 0
     
     def __init__(self, sizePopulation = 9):
         self.generation = [Wander() for _ in range(sizePopulation)]
         self.sizePopulation = sizePopulation
-        self.numberGen = 0
+        self.GenVersion = 0
     
     def saveBestRobots(self, top_robots = 3):
 
         # Check if the requested top if higher than avaliable
         top_robots = top_robots if top_robots <= len(self.generation) else len(self.generation)
 
-        print(f'{bcolors.OKBLUE}Saving top {top_robots} robots of Gen{self.numberGen}!{bcolors.ENDC}')
+        print(f'{bcolors.OKBLUE}Saving top {top_robots} robots of Gen{self.GenVersion}!{bcolors.ENDC}')
 
         # Sort the robots
         self.generation.sort(key=cmp_to_key(compare_robots))
@@ -388,8 +390,8 @@ class Population:
 
         # Create folder to save if it doesn't exist
         folder = f'tops{currentTime}'
-        if not os.path.exists(SAVE_DIRECTORY + folder):
-            os.mkdir(SAVE_DIRECTORY + folder)
+        if not os.path.exists(STATES_SAVE_DIRECTORY + folder):
+            os.mkdir(STATES_SAVE_DIRECTORY + folder)
 
         # Save models
         for i in range(top_robots):
@@ -397,32 +399,36 @@ class Population:
 
     def saveState(self, fileList):
 
-        print(f'{bcolors.OKBLUE}Saving state of Gen{self.numberGen}!{bcolors.ENDC}')
+        print(f'{bcolors.OKBLUE}Saving state of Gen{self.GenVersion}!{bcolors.ENDC}')
 
         # Get date
         currentTime = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
 
         # Create folder to save if it doesn't exist
         folder = f'state{currentTime}'
-        if not os.path.exists(SAVE_DIRECTORY + folder):
-            os.mkdir(SAVE_DIRECTORY + folder)
-
+        if not os.path.exists(STATES_SAVE_DIRECTORY + folder):
+            os.mkdir(STATES_SAVE_DIRECTORY + folder)
+            
+        # Create folder to save state list
+        if not os.path.exists(STATESLIST_SAVE_DIRECTORY):
+            os.mkdir(STATESLIST_SAVE_DIRECTORY)
+            
         # Save models
-        filesSaved = [str(self.numberGen)]   # First number Gen
+        filesSaved = [str(self.GenVersion)]   # First number Gen
         for i in range(self.sizePopulation):   # Then append all models files
             filesSaved.append(self.generation[i].saveModel(f'{folder}/model{i}_state{currentTime}'))
         
         # Write all files
-        with open(fileList, 'w') as f:
+        with open(STATESLIST_SAVE_DIRECTORY + fileList, 'w') as f:
             f.write('\n'.join(filesSaved))
     
     def loadState(self, listFile):
         modelsFiles = []
         print(f'{bcolors.OKBLUE}Loading state {listFile}{bcolors.ENDC}')
 
-        with open(listFile, 'r') as f:
+        with open(STATESLIST_SAVE_DIRECTORY + listFile, 'r') as f:
             modelsFiles = f.read().split('\n')
-            self.numberGen = int(modelsFiles[0])    # Get gen number from begining
+            self.GenVersion = int(modelsFiles[0])    # Get gen number from begining
             del modelsFiles[0]  # Remove gen number from list
         
         self.generation = [Wander(loadModel=modelFile) for modelFile in modelsFiles]
@@ -433,9 +439,9 @@ class Population:
             self.generation[i].simulateRobot()
     
     def nextGen(self):
-        self.numberGen += 1
+        self.GenVersion += 1
 
-        print(f'{bcolors.OKCYAN}Creating Gen{self.numberGen} of robots!{bcolors.ENDC}')
+        print(f'{bcolors.OKCYAN}Creating Gen{self.GenVersion} of robots!{bcolors.ENDC}')
         
         # Sort the robots
         self.generation.sort(key=cmp_to_key(compare_robots))
@@ -469,8 +475,12 @@ if __name__ == '__main__':
     rospy.init_node('AI_robot_controlled')
 
     pop = Population()
-    pop.loadState('/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/testGens.txt')
-    pop.simulateGeneration()
-    pop.nextGen()
-    # pop.simulateGeneration()
-    pop.saveState('/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/testGens.txt')
+    pop.loadState('firstGen.txt')
+    
+    while True:
+        
+        for _ in range(SAVE_STATE_EVERY_GENERATIONS):
+            pop.simulateGeneration()
+            pop.nextGen()
+            
+        pop.saveState(f'Gen{pop.GenVersion}.txt')

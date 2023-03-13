@@ -85,28 +85,30 @@ class Wander:
                 return
             
             # TODO: define sensor to pick
-            predictLeft = self.modelLeft.predict([self.scannnerData5Points])
-            predictRight = self.modelRight.predict([self.scannnerData5Points])
-            predictForward = self.modelForward.predict([self.scannnerData5Points])
-
-            if np.argmax(predictLeft)[0] == 1:
+            predictLeft = self.modelLeft.predict(np.asarray([self.scannnerData5Points]), verbose=0)
+            predictRight = self.modelRight.predict(np.asarray([self.scannnerData5Points]), verbose=0)
+            predictForward = self.modelForward.predict(np.asarray([self.scannnerData5Points]), verbose=0)
+            
+            print(f'Sensors: {self.scannnerData5Points}')
+            print(f'Predict left: {predictLeft}, Predict right: {predictRight}, Predict forward: {predictForward},')
+            
+            if np.argmax(predictLeft, axis=1)[0] == 1:
                 # Left
                 self.forward_vel, self.rotate_vel = 0.2, 0.5
                 self.categoricalOutput = [1.0, 0.0, 0.0]
 
-            elif np.argmax(predictRight)[0] == 1:
+            if np.argmax(predictRight, axis=1)[0] == 1:
                 # Right
                 self.forward_vel, self.rotate_vel = 0.2, -0.5
                 self.categoricalOutput = [0.0, 0.0, 1.0]
 
-            elif np.argmax(predictForward)[0] == 1:
+            if np.argmax(predictForward, axis=1)[0] == 1:
                 # Forward
                 self.forward_vel, self.rotate_vel = 0.5, 0
                 self.categoricalOutput = [0.0, 1.0, 0.0]
 
-
     def checkNumberOfScansColliding(self, msg: LaserScan):
-        return sum(self.laserMinDistance > range for range in msg.range[:30]) + sum(self.laserMinDistance > range for range in msg.range[-30:])
+        return sum(self.laserMinDistance > range for range in msg.ranges[:30]) + sum(self.laserMinDistance > range for range in msg.ranges[-30:])
 
 
     def getScanValues(self, msg: LaserScan):
@@ -183,7 +185,7 @@ if __name__ == '__main__':
 
     # TODO: insert the AI
     wand = Wander(False,
-                  '/home/ljmt/Escritorio/VAR/Carrera_Robots_VAR/src/all_listeners/models/left_model.pkl',
-                  '/home/ljmt/Escritorio/VAR/Carrera_Robots_VAR/src/all_listeners/models/right_model.pkl',
-                  '/home/ljmt/Escritorio/VAR/Carrera_Robots_VAR/src/all_listeners/models/up_model.pkl')
+                  '/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/models1/model_left.h5',
+                  '/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/models1/model_right.h5',
+                  '/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/models1/model_up.h5')
     wand.loop()

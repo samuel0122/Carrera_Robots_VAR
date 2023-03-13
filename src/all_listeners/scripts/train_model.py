@@ -177,7 +177,7 @@ def printHistory(history):
     plt.legend(['train', 'test'], loc='upper left')
     plt.show()
 
-doTraining = True
+doTraining = False
 directorySaved = '/home/samuel/P1_Carrera_de_robots/'
 filesNames5 = ['datos5_1.csv', 'datos5_2.csv', 'datos5_3.csv', 'datos5_4.csv', 'datos5_5.csv', 'datos5_6.csv']
 filesNamesE2 = ['datosE2_3.csv', 'datosE2_4.csv', 'datosE2_5.csv', 'datosE2_6.csv']
@@ -226,11 +226,17 @@ if doTraining:
 
 else:
     # Loads model
-    model = keras.models.load_model(directorySaved + 'best_model.h5')
+    model = keras.models.load_model('/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/models1/model_right.h5')
 
+    model.compile(optimizer='adam',
+                loss='categorical_crossentropy',
+                metrics=['accuracy'])
+    
+    print(x_train[0])
     # Predict's 10 cases
-    prediction = model.predict(x_train[0:10])
+    prediction = model.predict(np.asarray([x_train[0]]))
 
+    print(prediction)
     # Prints them
     print(f'Prediction: {convertOneHotEncodedLabelsToDecimal(prediction)}')
     print(f'Actual:     {convertOneHotEncodedLabelsToDecimal(y_train[:10])}')

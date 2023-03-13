@@ -1,2 +1,0 @@
-all_listeners:turtlebot_gazebo_multiple
--DCATKIN_DEVEL_PREFIX=/home/ljmt/Escritorio/VAR/Carrera_Robots_VAR/devel -DCMAKE_INSTALL_PREFIX=/home/ljmt/Escritorio/VAR/Carrera_Robots_VAR/install -G Unix Makefiles

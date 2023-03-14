@@ -99,6 +99,7 @@ class Wander:
         self.timeCrashed = None
         
         self.checkPoint = 0
+        self.lapsCompleted = 0
 
         # Checks of loops
         self.lastTimeChecked = None
@@ -131,7 +132,8 @@ class Wander:
         # Variables to know if the robot is alive
         self.robotCrashedEvent = threading.Event()
         
-        self.checkPoint = 0
+        self.checkPoint = -1
+        self.lapsCompleted = 0
         
         # Checks of loops
         self.last_x_checked, self.last_y_checked = INITIAL_ROBOT_X, INITIAL_ROBOT_Y
@@ -273,67 +275,119 @@ class Wander:
         Robot odometry callback
     """
     def getCheckPoints(self):
-        return self.checkPoint
+        return self.checkPoint, self.lapsCompleted
     
+    def killRobotAndBackCheckpoint(self):
+        self.checkPoint -= 1
+        self.robotCrashedEvent.set()
+        rospy.logerr(f'The robot has gone back from checkpoint {self.checkPoint}.')
+
+    def checkGoneBack(self, newX, newY):
+
+        if self.checkPoint < 1:     # Passed checkpoint 0
+            if newY > 8 and newY < 10 and newX < 5:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 2:   # Passed checkpoint 1
+            if newX > 5 and newX < 10 and newY > 8:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 3:   # Passed checkpoint 2
+            if newX > 5 and newX < 10 and newY > 6:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 4:   # Passed checkpoint 3
+            if newX > 5 and newX < 10 and newY > 4:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 5:   # Passed checkpoint 4
+            if newX > 8 and newX < 10 and newY > -2:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 6:   # Passed checkpoint 5
+            if newY > -10 and newY < -4 and newX > 4:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 7:  # Passed checkpoint 6
+            if newY > -10 and newY < -8 and newX > -6:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 8:  # Passed checkpoint 7
+            if newX > -10 and newX < -7 and newY < -8:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 9:  # Passed checkpoint 8
+            if newY > -3 and newY < -1 and newX < -7:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 10: # Passed checkpoint 9
+            if newY > -5 and newY < -3 and newX < -3:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 11: # Passed checkpoint 10
+            if newX > 1 and newX < 3 and newY < -1:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 12: # Passed checkpoint 11
+            if newY > 1 and newY < 3 and newX > 1:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 13:  # Passed checkpoint 12
+            if newY > 1 and newY < 3 and newX > -6:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 14: # Passed checkpoint 13
+            if newX > -10 and newX < -7 and newY < 3:
+                self.killRobotAndBackCheckpoint()
+        elif self.checkPoint < 15: # Passed checkpoint 14
+            if newY > 7 and newY < 10 and newX > -8:
+                self.killRobotAndBackCheckpoint()
+
     def checkPoints(self, newX, newY):
-        if self.checkPoint > 0:
-            if newY < 7 and newX < 9 and newX > 10:
-                self.checkPoint = -1
-            elif newY > 8 and newY < 10 and newX < 5 and self.checkPoint > 0:
-                # If it goes back, kill and out
-                self.checkPoint = -1
-                self.robotCrashedEvent.set()
-                rospy.logerr('The robot has gone back.')
-                return
-            else:
-                self.checkPoint = 0.5
-            
-        if self.checkPoint < 0.5:
+        initPoint = self.checkPoint
+
+        if self.checkPoint < 0:
             if newY > 8 and newY < 10 and newX > 7:
-                self.checkPoint = 0.5
+                self.checkPoint = 0
         elif self.checkPoint < 1:   # Checkpoint 1
-            if newX > 5 and newX < 10 and newY < 5.95:
+            if newX > 5 and newX < 10 and newY < 8:
                 self.checkPoint = 1
         elif self.checkPoint < 2: # Checkpoint 2
-            if newX > 5 and newX < 10 and newY < 3.95:
+            if newX > 5 and newX < 10 and newY < 6:
                 self.checkPoint = 2
         elif self.checkPoint < 3: # Checkpoint 3
-            if newX > 5 and newX < 10 and newY < 1.95:
+            if newX > 5 and newX < 10 and newY < 4:
                 self.checkPoint = 3
         elif self.checkPoint < 4: # Checkpoint 4
             if newX > 8 and newX < 10 and newY < -3:
                 self.checkPoint = 4
         elif self.checkPoint < 5: # Checkpoint 5
-            if newX < 3 and newY > -10 and newY < -8:
+            if newY > -10 and newY < -8 and newX < 3:
                 self.checkPoint = 5
         elif self.checkPoint < 6: # Checkpoint 6
-            if newX < -7 and newY > -10 and newY < -8:
+            if newY > -10 and newY < -8 and newX < -7:
                 self.checkPoint = 6
         elif self.checkPoint < 7: # Checkpoint 7
-            if newY > -7 and newX > -10 and newX < -8:
+            if newX > -10 and newX < -8 and newY > -7:
                 self.checkPoint = 7
         elif self.checkPoint < 8: # Checkpoint 8
-            if newX > -6 and newY > -3 and newY < -1:
+            if newY > -3 and newY < -1 and newX > -6:
                 self.checkPoint = 8
         elif self.checkPoint < 9: # Checkpoint 9
-            if newX > -2 and newY > -5 and newY < -3:
+            if newY > -5 and newY < -3 and newX > -2:
                 self.checkPoint = 9
         elif self.checkPoint < 10: # Checkpoint 10
-            if newY > 0 and newX > 1 and newX < 3:
+            if newX > 1 and newX < 3 and newY > 0:
                 self.checkPoint = 10
         elif self.checkPoint < 11: # Checkpoint 11
-            if newX < 0.5 and newY > 1 and newY < 3:
+            if newY > 1 and newY < 3 and newX < 0:
                 self.checkPoint = 11
         elif self.checkPoint < 12:  # Checkpoint 12
-            if newX < -7 and newY > 1 and newY < 3:
+            if newY > 1 and newY < 3 and newX < -7:
                 self.checkPoint = 12
         elif self.checkPoint < 13: # Checkpoint 13
-            if newY > 4 and newX > -10 and newX < -8:
+            if newX > -10 and newX < -8 and newY > 4:
                 self.checkPoint = 13
         elif self.checkPoint < 14: # Checkpoint 14
-            if newX > -8 and newY > 7 and newY < 10:
+            if newY > 7 and newY < 10 and newX > -7:
                 self.checkPoint = 14
+        elif self.checkPoint == 14:
+            if newY > 8 and newY < 10 and newX > 7:
+                self.checkPoint = 0
+                self.lapsCompleted += 1
+                print(f'{bcolors.WARNING}{bcolors.BOLD}{bcolors.UNDERLINE}Compleated a lap {self.checkPoint} {bcolors.ENDC}')
         
+        if initPoint != self.checkPoint:
+            print(f'{bcolors.HEADER}Reached checkpoint {self.checkPoint} {bcolors.ENDC}')
+
+
     def odom_callback(self, msg: Odometry):
         
         # Keep odometry data     
@@ -341,6 +395,7 @@ class Wander:
         newY = msg.pose.pose.position.y
         
         self.checkPoints(newX=newX, newY=newY)
+        self.checkGoneBack(newX=newX, newY=newY)
         
         if time.time() > self.lastTimeChecked + CHECK_EVERY_SECONDS:
             #Its time to check again
@@ -411,9 +466,12 @@ class Wander:
 
 def compare_robots(robot1: Wander, robot2: Wander):
 
-    checkPoint1 = robot1.getCheckPoints()
-    checkPoint2 = robot2.getCheckPoints()
+    checkPoint1, laps1 = robot1.getCheckPoints()
+    checkPoint2, laps2 = robot2.getCheckPoints()
     
+    if laps1 != laps2:
+        return -1 if laps1 > laps2 else 1
+
     if checkPoint1 != checkPoint2:
         return -1 if checkPoint1 > checkPoint2 else 1
     

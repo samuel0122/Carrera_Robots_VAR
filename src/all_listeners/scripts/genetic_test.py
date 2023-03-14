@@ -103,7 +103,7 @@ def compare_childs(XOR1: XOR, XOR2: XOR):
 
 
 class Population:
-    MUTATION_RANGE = 0.02
+    MUTATION_RANGE = 0.05
     MUTATION_RATE  = 0.3
     CROSSOVER_RATE = 0.5
     GenVersion = 0

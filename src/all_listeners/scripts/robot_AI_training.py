@@ -40,13 +40,14 @@ LATER_WALL_CRASH_PATIENTE = 15
 LASER_MAX_DISTANCE = 5.0
 LASER_MIN_DISTANCE = 0.2
 INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -6.5, 8.5, 0.2
-INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 0, -9, 0.2
+INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 2, 8.5, 0.2
+#INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 0, -9, 0.2
+#INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 7, 1.5, 0.2
 STATES_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/states/'
 STATESLIST_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/statesLists/'
 
-INITIAL_ROBOT_X = 2
 
-SAVE_STATE_EVERY_GENERATIONS = 15
+SAVE_STATE_EVERY_GENERATIONS = 8
 
 def create_model(inputs, outputs):
     """
@@ -130,7 +131,7 @@ class Wander:
         # Variables to know if the robot is alive
         self.robotCrashedEvent = threading.Event()
         
-        self.checkPoint = 5
+        self.checkPoint = 0
         
         # Checks of loops
         self.last_x_checked, self.last_y_checked = INITIAL_ROBOT_X, INITIAL_ROBOT_Y
@@ -171,7 +172,7 @@ class Wander:
         spawnMsg.pose.position.x, spawnMsg.pose.position.y, spawnMsg.pose.position.z = INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z
 
         # Spawn orientation
-        spawnMsg.pose.orientation.x, spawnMsg.pose.orientation.y, spawnMsg.pose.orientation.z = 0, 0, 180
+        spawnMsg.pose.orientation.x, spawnMsg.pose.orientation.y, spawnMsg.pose.orientation.z = 0, 0, 0
 
         # Send the message and close the publisher
         time.sleep(0.5)
@@ -278,10 +279,19 @@ class Wander:
         if self.checkPoint < 1:
             if newY < 7 and newX < 9 and newX > 10:
                 self.checkPoint = -1
+            elif newY > 8 and newY < 10 and newX < 5 and self.checkPoint == 0.5:
+                # If it goes back, kill and out
+                self.checkPoint = -1
+                self.robotCrashedEvent.set()
+                rospy.logerr('The robot has gone back.')
+                return
             else:
                 self.checkPoint = 0
             
-        if self.checkPoint < 1:   # Checkpoint 1
+        if self.checkPoint < 0.5:
+            if newY > 8 and newY < 10 and newX < 7:
+                self.checkPoint = 0.5
+        elif self.checkPoint < 1:   # Checkpoint 1
             if newX > 5 and newX < 10 and newY < 5.95:
                 self.checkPoint = 1
         elif self.checkPoint < 2: # Checkpoint 2
@@ -424,6 +434,8 @@ def compare_robots(robot1: Wander, robot2: Wander):
             #     return -1 if robot1Time < robot2Time else 1
             # else:
             # If time are long, put first the one who survived more time
+            #return -1 if robot1Time > robot2Time else 1
+            # tHE ONE WHO TOOK LESS TO GET TO THE CHECKPOINT
             return -1 if robot1Time > robot2Time else 1
         else:
             # Same X distance, different Y distance
@@ -440,7 +452,7 @@ def compare_robots(robot1: Wander, robot2: Wander):
 
 
 class Population:
-    MUTATION_RANGE = 0.02
+    MUTATION_RANGE = 0.1
     MUTATION_RATE  = 0.3
     CROSSOVER_RATE = 0.5
     GenVersion = 0
@@ -554,14 +566,15 @@ if __name__ == '__main__':
     pop = Population()
     pop.loadState('trainingDefault.txt')
     
-    for _ in range(5):
-        
-        for _ in range(SAVE_STATE_EVERY_GENERATIONS):
-            pop.simulateGeneration()
-            pop.nextGen()
+    if True:
+        for _ in range(3):
             
-        pop.saveState(f'Gen{pop.GenVersion}.txt')
+            for _ in range(SAVE_STATE_EVERY_GENERATIONS):
+                pop.simulateGeneration()
+                pop.nextGen()
+                
+            pop.saveState(f'Gen{pop.GenVersion}.txt')
 
-    pop.saveState(f'trainingDefault.txt')
+        pop.saveState(f'trainingDefault.txt')
         
         

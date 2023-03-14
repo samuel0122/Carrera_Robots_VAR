@@ -441,7 +441,7 @@ def compare_robots(robot1: Wander, robot2: Wander):
 
 class Population:
     MUTATION_RANGE = 0.02
-    MUTATION_RATE  = 0.1
+    MUTATION_RATE  = 0.3
     CROSSOVER_RATE = 0.5
     GenVersion = 0
     

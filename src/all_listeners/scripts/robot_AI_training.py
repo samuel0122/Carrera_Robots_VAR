@@ -276,20 +276,20 @@ class Wander:
         return self.checkPoint
     
     def checkPoints(self, newX, newY):
-        if self.checkPoint < 1:
+        if self.checkPoint > 0:
             if newY < 7 and newX < 9 and newX > 10:
                 self.checkPoint = -1
-            elif newY > 8 and newY < 10 and newX < 5 and self.checkPoint == 0.5:
+            elif newY > 8 and newY < 10 and newX < 5 and self.checkPoint > 0:
                 # If it goes back, kill and out
                 self.checkPoint = -1
                 self.robotCrashedEvent.set()
                 rospy.logerr('The robot has gone back.')
                 return
             else:
-                self.checkPoint = 0
+                self.checkPoint = 0.5
             
         if self.checkPoint < 0.5:
-            if newY > 8 and newY < 10 and newX < 7:
+            if newY > 8 and newY < 10 and newX > 7:
                 self.checkPoint = 0.5
         elif self.checkPoint < 1:   # Checkpoint 1
             if newX > 5 and newX < 10 and newY < 5.95:

@@ -45,8 +45,11 @@ def create_model(inputs, outputs) :
     input_layer = keras.layers.Input(inputs)
 
     # Hidden layers
-    to_output_layer = keras.layers.Dense(5, activation="relu")(input_layer)
+    x = input_layer
+    x = keras.layers.Dense(10, activation="relu")(x)
+    x = keras.layers.Dense(5, activation="relu")(x)
 
+    to_output_layer = x
     # Output layer
     output_layer = keras.layers.Dense(outputs, activation="softmax")(to_output_layer)
 
@@ -103,7 +106,7 @@ def compare_childs(XOR1: XOR, XOR2: XOR):
 
 
 class Population:
-    MUTATION_RANGE = 0.05
+    MUTATION_RANGE = 0.1
     MUTATION_RATE  = 0.3
     CROSSOVER_RATE = 0.5
     GenVersion = 0

@@ -35,15 +35,15 @@ class bcolors:
 
 # CONSTANTS
 CHECK_EVERY_SECONDS = 20
-MINIMUM_DISTANCE_DIFFERENCE = 1.0
+MINIMUM_DISTANCE_DIFFERENCE = 2.0
 LATER_WALL_CRASH_PATIENTE = 15
 LASER_MAX_DISTANCE = 5.0
 LASER_MIN_DISTANCE = 0.2
 INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -6.5, 8.5, 0.2
-INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 2, 8.5, 0.2
-INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 7, 3, 0.2
-INITIAL_CHECKPOINT = 2 #-1
-INITIAL_ROTATION_X, INITIAL_ROTATION_Y, INITIAL_ROTATION_Z = 0, 0, 180
+INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -2, 8.5, 0.2
+#INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 7, 3, 0.2
+INITIAL_CHECKPOINT = -1
+INITIAL_ROTATION_X, INITIAL_ROTATION_Y, INITIAL_ROTATION_Z = 0, 0, 0
 STATES_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/states/'
 STATESLIST_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/statesLists/'
 
@@ -328,7 +328,7 @@ class Wander:
             if newX > -10 and newX < -7 and newY < 3:
                 self.killRobotAndBackCheckpoint()
         elif self.checkPoint == 14: # Passed checkpoint 14
-            if newY > 7 and newY < 10 and newX > -8:
+            if newY > 7 and newY < 10 and newX < -8:
                 self.killRobotAndBackCheckpoint()
 
     def checkPoints(self, newX, newY):
@@ -398,14 +398,10 @@ class Wander:
         self.checkPoints(newX=newX, newY=newY)
         self.checkGoneBack(newX=newX, newY=newY)
         
-        if time.time() > self.lastTimeChecked + CHECK_EVERY_SECONDS:
+        if time.time() > self.lastTimeChecked + CHECK_EVERY_SECONDS and False:
             #Its time to check again
             if abs(self.last_x_checked - newX) < MINIMUM_DISTANCE_DIFFERENCE and abs(self.last_y_checked - newY) < MINIMUM_DISTANCE_DIFFERENCE:
                 rospy.logerr('The robot has staid in a loop')
-                self.robotCrashedEvent.set()
-                return
-            elif abs(INITIAL_ROBOT_X - newX) < MINIMUM_DISTANCE_DIFFERENCE and abs(INITIAL_ROBOT_Y - newY) < MINIMUM_DISTANCE_DIFFERENCE:
-                rospy.logerr('The robot has returned to it\'s initial position')
                 self.robotCrashedEvent.set()
                 return
             

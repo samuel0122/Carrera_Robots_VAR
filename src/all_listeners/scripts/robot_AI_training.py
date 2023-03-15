@@ -47,7 +47,7 @@ STATES_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/state
 STATESLIST_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/statesLists/'
 
 
-SAVE_STATE_EVERY_GENERATIONS = 8
+SAVE_STATE_EVERY_GENERATIONS = 3
 
 def create_model(inputs, outputs):
     """
@@ -284,49 +284,49 @@ class Wander:
 
     def checkGoneBack(self, newX, newY):
 
-        if self.checkPoint < 1:     # Passed checkpoint 0
+        if self.checkPoint == 0:     # Passed checkpoint 0
             if newY > 8 and newY < 10 and newX < 5:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 2:   # Passed checkpoint 1
+        elif self.checkPoint == 1:   # Passed checkpoint 1
             if newX > 5 and newX < 10 and newY > 8:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 3:   # Passed checkpoint 2
+        elif self.checkPoint == 2:   # Passed checkpoint 2
             if newX > 5 and newX < 10 and newY > 6:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 4:   # Passed checkpoint 3
+        elif self.checkPoint == 3:   # Passed checkpoint 3
             if newX > 5 and newX < 10 and newY > 4:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 5:   # Passed checkpoint 4
+        elif self.checkPoint == 4:   # Passed checkpoint 4
             if newX > 8 and newX < 10 and newY > -2:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 6:   # Passed checkpoint 5
+        elif self.checkPoint == 5:   # Passed checkpoint 5
             if newY > -10 and newY < -4 and newX > 4:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 7:  # Passed checkpoint 6
+        elif self.checkPoint == 6:  # Passed checkpoint 6
             if newY > -10 and newY < -8 and newX > -6:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 8:  # Passed checkpoint 7
+        elif self.checkPoint == 7:  # Passed checkpoint 7
             if newX > -10 and newX < -7 and newY < -8:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 9:  # Passed checkpoint 8
+        elif self.checkPoint == 8:  # Passed checkpoint 8
             if newY > -3 and newY < -1 and newX < -7:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 10: # Passed checkpoint 9
+        elif self.checkPoint == 9: # Passed checkpoint 9
             if newY > -5 and newY < -3 and newX < -3:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 11: # Passed checkpoint 10
+        elif self.checkPoint == 10: # Passed checkpoint 10
             if newX > 1 and newX < 3 and newY < -1:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 12: # Passed checkpoint 11
+        elif self.checkPoint == 11: # Passed checkpoint 11
             if newY > 1 and newY < 3 and newX > 1:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 13:  # Passed checkpoint 12
+        elif self.checkPoint == 12:  # Passed checkpoint 12
             if newY > 1 and newY < 3 and newX > -6:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 14: # Passed checkpoint 13
+        elif self.checkPoint == 13: # Passed checkpoint 13
             if newX > -10 and newX < -7 and newY < 3:
                 self.killRobotAndBackCheckpoint()
-        elif self.checkPoint < 15: # Passed checkpoint 14
+        elif self.checkPoint == 14: # Passed checkpoint 14
             if newY > 7 and newY < 10 and newX > -8:
                 self.killRobotAndBackCheckpoint()
 
@@ -383,7 +383,7 @@ class Wander:
                 self.checkPoint = 0
                 self.lapsCompleted += 1
                 print(f'{bcolors.WARNING}{bcolors.BOLD}{bcolors.UNDERLINE}Compleated a lap {self.checkPoint} {bcolors.ENDC}')
-        
+                self.killRobotAndBackCheckpoint()       
         if initPoint != self.checkPoint:
             print(f'{bcolors.HEADER}Reached checkpoint {self.checkPoint} {bcolors.ENDC}')
 
@@ -494,7 +494,7 @@ def compare_robots(robot1: Wander, robot2: Wander):
             # If time are long, put first the one who survived more time
             #return -1 if robot1Time > robot2Time else 1
             # tHE ONE WHO TOOK LESS TO GET TO THE CHECKPOINT
-            return -1 if robot1Time > robot2Time else 1
+            return -1 if robot1Time < robot2Time else 1
         else:
             # Same X distance, different Y distance
             # Put first the robot who runned more Y distance
@@ -622,7 +622,7 @@ if __name__ == '__main__':
     rospy.init_node('AI_robot_controlled')
 
     pop = Population()
-    pop.loadState('trainingDefault.txt')
+    pop.loadState('Gen516.txt')
     
     if True:
         for _ in range(3):

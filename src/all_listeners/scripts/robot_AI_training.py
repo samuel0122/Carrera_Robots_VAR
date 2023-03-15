@@ -41,8 +41,9 @@ LASER_MAX_DISTANCE = 5.0
 LASER_MIN_DISTANCE = 0.2
 INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -6.5, 8.5, 0.2
 INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 2, 8.5, 0.2
-#INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 0, -9, 0.2
-#INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 7, 1.5, 0.2
+INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 7, 3, 0.2
+INITIAL_CHECKPOINT = 2 #-1
+INITIAL_ROTATION_X, INITIAL_ROTATION_Y, INITIAL_ROTATION_Z = 0, 0, 180
 STATES_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/states/'
 STATESLIST_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/statesLists/'
 
@@ -132,7 +133,7 @@ class Wander:
         # Variables to know if the robot is alive
         self.robotCrashedEvent = threading.Event()
         
-        self.checkPoint = -1
+        self.checkPoint = INITIAL_CHECKPOINT
         self.lapsCompleted = 0
         
         # Checks of loops
@@ -174,7 +175,7 @@ class Wander:
         spawnMsg.pose.position.x, spawnMsg.pose.position.y, spawnMsg.pose.position.z = INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z
 
         # Spawn orientation
-        spawnMsg.pose.orientation.x, spawnMsg.pose.orientation.y, spawnMsg.pose.orientation.z = 0, 0, 0
+        spawnMsg.pose.orientation.x, spawnMsg.pose.orientation.y, spawnMsg.pose.orientation.z = INITIAL_ROTATION_X, INITIAL_ROTATION_Y, INITIAL_ROTATION_Z
 
         # Send the message and close the publisher
         time.sleep(0.5)
@@ -280,7 +281,7 @@ class Wander:
     def killRobotAndBackCheckpoint(self):
         self.checkPoint -= 1
         self.robotCrashedEvent.set()
-        rospy.logerr(f'The robot has gone back from checkpoint {self.checkPoint}.')
+        rospy.logerr(f'The robot has gone back from checkpoint {self.checkPoint+1} to {self.checkPoint}.')
 
     def checkGoneBack(self, newX, newY):
 
@@ -337,13 +338,13 @@ class Wander:
             if newY > 8 and newY < 10 and newX > 7:
                 self.checkPoint = 0
         elif self.checkPoint < 1:   # Checkpoint 1
-            if newX > 5 and newX < 10 and newY < 8:
+            if newX > 5 and newX < 10 and newY < 6:
                 self.checkPoint = 1
         elif self.checkPoint < 2: # Checkpoint 2
-            if newX > 5 and newX < 10 and newY < 6:
+            if newX > 5 and newX < 10 and newY < 4:
                 self.checkPoint = 2
         elif self.checkPoint < 3: # Checkpoint 3
-            if newX > 5 and newX < 10 and newY < 4:
+            if newX > 5 and newX < 10 and newY < 2:
                 self.checkPoint = 3
         elif self.checkPoint < 4: # Checkpoint 4
             if newX > 8 and newX < 10 and newY < -3:
@@ -622,9 +623,9 @@ if __name__ == '__main__':
     rospy.init_node('AI_robot_controlled')
 
     pop = Population()
-    pop.loadState('Gen516.txt')
     
     if True:
+        pop.loadState('trainingDefault.txt')
         for _ in range(3):
             
             for _ in range(SAVE_STATE_EVERY_GENERATIONS):
@@ -634,5 +635,8 @@ if __name__ == '__main__':
             pop.saveState(f'Gen{pop.GenVersion}.txt')
 
         pop.saveState(f'trainingDefault.txt')
+    else:
+        pop.loadState('Gen522.txt')
         
+        pop.saveState(f'trainingDefault.txt')
         

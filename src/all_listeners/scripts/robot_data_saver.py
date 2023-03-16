@@ -4,18 +4,33 @@ from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan, Image
 import math
 from nav_msgs.msg import Odometry
-from tensorflow import keras
 import numpy as np
 import time
+import datetime
 
 import cv2
 from cv_bridge import CvBridge
+from PIL import Image as PILImage
+
+# If save proximity sensor
+saveSensorData = False
+
+# If save camera images
+saveCamaraData = True
+everyXSeconds = 1
+folderToSaveImages = '/home/samuel/P1_Carrera_de_robots/Imagenes/'
+
+# If display camera view
+displayCameraView = False
+
 
 """
     File to control the robot and save it's data in different csv files
 """
 class Wander:
     def __init__(self, overridePreviousWriteFile = True):
+
+        self.lastCameraSave = time.time()
         
         # Subscribers to get the data and publisher to indicate the robot it's speeds
         self.command_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
@@ -25,11 +40,10 @@ class Wander:
 
 
         # Video sub
-        displayVideo = False
-        self.image_sub = None
-
-        if displayVideo:
-            self.initializeRGB()
+        self.image_sub = rospy.Subscriber('/camera/rgb/image_raw', Image, self.imageRGB_callback)
+        
+        if displayCameraView:
+            self.initializeDisplayRGB()
 
         # Movement variables
         self.forward_vel = 0
@@ -46,20 +60,21 @@ class Wander:
         self.scannnerDataEvery2 = None
 
         # If set to save information
-        self.fileNameAllPoints  = "/home/samuel/P1_Carrera_de_robots/datosAll.csv"
-        self.fileName5Points = "/home/samuel/P1_Carrera_de_robots/datos5.csv"
-        self.fileNameEvery2 = "/home/samuel/P1_Carrera_de_robots/datosE2.csv"
-        self.fileNameEvery5 = "/home/samuel/P1_Carrera_de_robots/datosE5.csv"
+        if saveSensorData:
+            self.fileNameAllPoints  = "/home/samuel/P1_Carrera_de_robots/datosAll.csv"
+            self.fileName5Points = "/home/samuel/P1_Carrera_de_robots/datos5.csv"
+            self.fileNameEvery2 = "/home/samuel/P1_Carrera_de_robots/datosE2.csv"
+            self.fileNameEvery5 = "/home/samuel/P1_Carrera_de_robots/datosE5.csv"
 
-        self.allFiles = [self.fileNameAllPoints, self.fileName5Points, self.fileNameEvery2, self.fileNameEvery5]
+            self.allFiles = [self.fileNameAllPoints, self.fileName5Points, self.fileNameEvery2, self.fileNameEvery5]
 
-        if overridePreviousWriteFile:
-            for fileName in self.allFiles:
-                with open(fileName, 'w') as f:
-                    f.write('') # Create and clear the file
+            if overridePreviousWriteFile:
+                for fileName in self.allFiles:
+                    with open(fileName, 'w') as f:
+                        f.write('') # Create and clear the file
 
-            with open(self.fileName5Points, 'w') as f:
-                f.write('sensor0;sensor1;sensor2;sensor3;sensor4;left;up;right\n')  # Write header for 5 points
+                with open(self.fileName5Points, 'w') as f:
+                    f.write('sensor0;sensor1;sensor2;sensor3;sensor4;left;up;right\n')  # Write header for 5 points
 
 
     def __del__(self):
@@ -73,17 +88,20 @@ class Wander:
         """
 
         if self.keyInserted == 'a':  # Left
-            self.forward_vel, self.rotate_vel = 0.2, 0.5
+            self.forward_vel, self.rotate_vel = 0, 0.5
             self.categoricalOutput = [1.0, 0.0, 0.0]
 
         elif self.keyInserted == 'd':# Right
-            self.forward_vel, self.rotate_vel = 0.2, -0.5
+            self.forward_vel, self.rotate_vel = 0, -0.5
             self.categoricalOutput = [0.0, 0.0, 1.0]
 
         elif self.keyInserted == 'w':# Forward
-            self.forward_vel, self.rotate_vel = 0.5, 0
+            self.forward_vel, self.rotate_vel = 0.3, 0
             self.categoricalOutput = [0.0, 1.0, 0.0]
 
+        elif self.keyInserted == 's':# Forward
+            self.forward_vel, self.rotate_vel = -0.3, 0
+            self.categoricalOutput = [0.0, 1.0, 0.0]
 
     def checkNumberOfScansColliding(self, msg: LaserScan):
         # Only get the front 60º
@@ -153,8 +171,8 @@ class Wander:
             Reads the scanner and sends the robot's speed
         """
 
-        if self.checkNumberOfScansColliding(msg) > self.laserWallCrashPatiente:
-            rospy.logerr("COLLIDING")
+        # if self.checkNumberOfScansColliding(msg) > self.laserWallCrashPatiente:
+        #     rospy.logerr("COLLIDING")
 
         # Get the scan values
         self.getScanValues(msg)
@@ -168,40 +186,48 @@ class Wander:
         msg.angular.z = self.rotate_vel
 
         # Write the state in file
-        self.writeCurrentState()
+        if saveSensorData:
+            self.writeCurrentState()
 
         # Publish the message
         self.command_pub.publish(msg)
 
 
-    def initializeRGB(self):
-        self.image_sub = rospy.Subscriber('/camera/rgb/image_raw', Image, self.imageRGB_callback)
+    def initializeDisplayRGB(self):
         cv2.namedWindow('viewRGB')
         cv2.startWindowThread()
         
     def imageRGB_callback(self, msg: Image):
-        try:
-            cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
-            cv2.imshow('viewRGB', cv_image)
-            cv2.waitKey(30)
-        except ...:
-            rospy.logerr('Could not convert from \'{msg.encoding}\' to \'bgr8\'.')
+        if displayCameraView:
+            try:
+                cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
+                cv2.imshow('viewRGB', cv_image)
+                cv2.waitKey(30)
+            except ...:
+                rospy.logerr('Could not convert from \'{msg.encoding}\' to \'bgr8\'.')
 
+        if saveCamaraData:
+            if time.time() > self.lastCameraSave + everyXSeconds:
+                fileName = folderToSaveImages + 'image_' + datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S") + '.png'
+                
+                # Convert the ROS image message to a PIL Image object
+                cv_image = CvBridge().imgmsg_to_cv2(msg, desired_encoding="passthrough")
+                
+                # Save the image
+                PILImage.fromarray(cv_image).save(fileName, format='PNG')
+                
+                self.lastCameraSave = time.time()
 
     def loop(self):
         """
             Loop where the player
         """
-
-        if self.controlledByAI:
-            # If the robot is controlled by AI, stop this Thread's execution and just execute the callbacks
-            rospy.spin()
-        else:
-            # Otherwise, if the robot is controlled by the player, recieve keyboard's inputs
-            while not rospy.is_shutdown():
-                value = input()
-                if len(value) > 0:
-                    self.keyInserted = value[0]
+        print('Robot created. Insert a move key and press enter to send it to the robot.')
+        # Otherwise, if the robot is controlled by the player, recieve keyboard's inputs
+        while not rospy.is_shutdown():
+            value = input()
+            if len(value) > 0:
+                self.keyInserted = value[0]
 
 if __name__ == '__main__':
     rospy.init_node('player_controlled_saver_robot')

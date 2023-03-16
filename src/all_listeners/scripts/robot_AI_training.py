@@ -632,7 +632,7 @@ if __name__ == '__main__':
 
         pop.saveState(f'trainingDefault.txt')
     else:
-        pop.loadState('Gen522.txt')
+        pop.loadState('Gen597.txt')
         
         pop.saveState(f'trainingDefault.txt')
         

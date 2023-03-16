@@ -40,9 +40,9 @@ LATER_WALL_CRASH_PATIENTE = 15
 LASER_MAX_DISTANCE = 5.0
 LASER_MIN_DISTANCE = 0.2
 INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -6.5, 8.5, 0.2
-INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -2, 8.5, 0.2
+INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -2, -4, 0.2
 #INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 7, 3, 0.2
-INITIAL_CHECKPOINT = -1
+INITIAL_CHECKPOINT = 8#-1
 INITIAL_ROTATION_X, INITIAL_ROTATION_Y, INITIAL_ROTATION_Z = 0, 0, 0
 STATES_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/states/'
 TREELAPS_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/3LapsModels/'
@@ -195,6 +195,8 @@ class Wander:
         return abs(self.xMax - self.xMin), abs(self.yMax - self.yMin)
 
     def getTimeAlive(self):
+        if self.timeCrashed is None or self.timeStarted is None:
+            return 0
         return self.timeCrashed - self.timeStarted
 
     def getRobotWeights(self):
@@ -219,11 +221,11 @@ class Wander:
         predict = self.modelAI.predict([self.scannerData], verbose=0)
         move = np.argmax(predict, axis=1)[0]
         if   move == 0:   # Left
-            self.forward_vel, self.rotate_vel = 0.3, 0.5
+            self.forward_vel, self.rotate_vel = 0.5, 0.75
         elif move == 2:   # Right
-            self.forward_vel, self.rotate_vel = 0.3, -0.5
+            self.forward_vel, self.rotate_vel = 0.5, -0.75
         elif move == 1:   # Forward
-            self.forward_vel, self.rotate_vel = 0.5, 0
+            self.forward_vel, self.rotate_vel = 0.6, 0
 
     def isColliding(self):
         if self.scannerData is None or self.previousScannnerData is None:
@@ -369,6 +371,8 @@ class Wander:
             if newX > 1 and newX < 3 and newY > 0:
                 self.checkPoint = 10
         elif self.checkPoint < 11: # Checkpoint 11
+            if newX < 4 and newX > 2 and newY > 3.5:
+                self.killRobotAndBackCheckpoint()
             if newY > 1 and newY < 3 and newX < 0:
                 self.checkPoint = 11
         elif self.checkPoint < 12:  # Checkpoint 12
@@ -384,7 +388,7 @@ class Wander:
             if newY > 8 and newY < 10 and newX > 7:
                 self.checkPoint = 0
                 self.lapsCompleted += 1
-                print(f'{bcolors.WARNING}{bcolors.BOLD}{bcolors.UNDERLINE}Compleated a lap {self.lapsCompleted} {bcolors.ENDC}')
+                print(f'{bcolors.WARNING}{bcolors.BOLD}{bcolors.UNDERLINE}Compleated lap {self.lapsCompleted} in {int(time.time() - self.timeStarted)} seconds{bcolors.ENDC}')
                 if self.lapsCompleted == 3:
                     self.saveModel(save3Laps=True)
                     self.robotCrashedEvent.set()
@@ -597,7 +601,7 @@ class Population:
         print(f'{bcolors.OKCYAN}Creating Gen{self.GenVersion} of robots!{bcolors.ENDC}')
         
         # Sort the robots
-        self.generation.sort(key=cmp_to_key(compare_robots))
+        #self.generation.sort(key=cmp_to_key(compare_robots))
         
         print([r.getTimeAlive() for  r in self.generation])
 
@@ -635,8 +639,8 @@ if __name__ == '__main__':
         pop.loadState('trainingDefault.txt')
             
         for _ in range(SAVE_STATE_EVERY_GENERATIONS):
-            pop.simulateGeneration()
             pop.nextGen()
+            pop.simulateGeneration()
             
         pop.saveState(f'Gen{pop.GenVersion}.txt')
 

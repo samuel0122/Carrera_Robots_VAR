@@ -518,7 +518,7 @@ def compare_robots(robot1: Wander, robot2: Wander):
 
 
 class Population:
-    MUTATION_RANGE = 0.1
+    MUTATION_RANGE = 0.05
     MUTATION_RATE  = 0.3
     CROSSOVER_RATE = 0.5
     GenVersion = 0
@@ -633,13 +633,12 @@ if __name__ == '__main__':
     
     if True:
         pop.loadState('trainingDefault.txt')
-        for _ in range(3):
             
-            for _ in range(SAVE_STATE_EVERY_GENERATIONS):
-                pop.simulateGeneration()
-                pop.nextGen()
-                
-            pop.saveState(f'Gen{pop.GenVersion}.txt')
+        for _ in range(SAVE_STATE_EVERY_GENERATIONS):
+            pop.simulateGeneration()
+            pop.nextGen()
+            
+        pop.saveState(f'Gen{pop.GenVersion}.txt')
 
         pop.saveState(f'trainingDefault.txt')
     else:

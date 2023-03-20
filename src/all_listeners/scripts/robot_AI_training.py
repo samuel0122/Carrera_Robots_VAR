@@ -40,16 +40,17 @@ LATER_WALL_CRASH_PATIENTE = 15
 LASER_MAX_DISTANCE = 5.0
 LASER_MIN_DISTANCE = 0.2
 INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -6.5, 8.5, 0.2
-INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -2, 8.5, 0.2
+#INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -2, 8.5, 0.2
 #INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = 7, 3, 0.2
 INITIAL_CHECKPOINT = -1
 INITIAL_ROTATION_X, INITIAL_ROTATION_Y, INITIAL_ROTATION_Z = 0, 0, 0
 STATES_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/states/'
 TREELAPS_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/3LapsModels/'
+TENLAPS_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/10LapsModels/'
 STATESLIST_SAVE_DIRECTORY = '/home/samuel/Carrera_Robots_VAR/src/all_listeners/statesLists/'
 
 
-SAVE_STATE_EVERY_GENERATIONS = 3
+SAVE_STATE_EVERY_GENERATIONS = 2
 
 def create_model(inputs, outputs):
     """
@@ -391,8 +392,8 @@ class Wander:
                 self.checkPoint = 0
                 self.lapsCompleted += 1
                 print(f'{bcolors.WARNING}{bcolors.BOLD}{bcolors.UNDERLINE}Compleated lap {self.lapsCompleted} in {int(time.time() - self.timeStarted)} seconds{bcolors.ENDC}')
-                if self.lapsCompleted == 3:
-                    self.saveModel(save3Laps=True)
+                if self.lapsCompleted == 10:
+                    self.saveModel(save10Laps=True)
                     self.robotCrashedEvent.set()
         if initPoint != self.checkPoint:
             print(f'{bcolors.HEADER}Reached checkpoint {self.checkPoint} {bcolors.ENDC}')
@@ -460,7 +461,7 @@ class Wander:
         self.laser_sub.unregister()
         self.odom_sub.unregister()
 
-    def saveModel(self, model_name = None, save3Laps = False, prefix = ''):
+    def saveModel(self, model_name = None, save3Laps = False, save10Laps = False, prefix = ''):
         if model_name is None:
             model_name = f'modelAI_{int(self.getTimeAlive())}_{int(self.getAreaRun())}.h5'
         
@@ -468,13 +469,13 @@ class Wander:
         
         if save3Laps:
             fileSave = TREELAPS_SAVE_DIRECTORY + f'modelAI_{datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")}.h5'
-            self.modelAI.save(fileSave)
+        elif save10Laps:
+            fileSave = TENLAPS_SAVE_DIRECTORY + f'modelAI_{datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")}.h5'
         else:
             fileSave = STATES_SAVE_DIRECTORY + prefix + model_name
-            self.modelAI.save(fileSave)
-        
-            
 
+        self.modelAI.save(fileSave)
+        
         return fileSave
 
 
@@ -647,8 +648,8 @@ if __name__ == '__main__':
         pop.loadState('trainingDefault.txt')
             
         for _ in range(SAVE_STATE_EVERY_GENERATIONS):
-            pop.nextGen()
             pop.simulateGeneration()
+            pop.nextGen()
             
         pop.saveState(f'Gen{pop.GenVersion}.txt')
 

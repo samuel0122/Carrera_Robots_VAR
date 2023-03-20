@@ -391,8 +391,8 @@ class Wander:
                 self.checkPoint = 0
                 self.lapsCompleted += 1
                 print(f'{bcolors.WARNING}{bcolors.BOLD}{bcolors.UNDERLINE}Compleated lap {self.lapsCompleted} in {int(time.time() - self.timeStarted)} seconds{bcolors.ENDC}')
-                if self.lapsCompleted == 1:
-                    #self.saveModel(save3Laps=True)
+                if self.lapsCompleted == 3:
+                    self.saveModel(save3Laps=True)
                     self.robotCrashedEvent.set()
         if initPoint != self.checkPoint:
             print(f'{bcolors.HEADER}Reached checkpoint {self.checkPoint} {bcolors.ENDC}')

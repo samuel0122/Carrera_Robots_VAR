@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+Robot controlled by keyboard saving data
+    @authors: Samuel Oliva Bulpitt, Luis Jesús Marhuenda Tendero
+"""
+
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan, Image

@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+Robot controlled by AI
+    @authors: Samuel Oliva Bulpitt, Luis Jesús Marhuenda Tendero
+"""
+
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan, Image
@@ -7,138 +12,152 @@ from nav_msgs.msg import Odometry
 from tensorflow import keras
 import numpy as np
 import time
+from gazebo_msgs.msg import ModelState
+import threading
 
 import cv2
 from cv_bridge import CvBridge
 
+# CONSTANTS
+LASER_MAX_DISTANCE = 5.0
+LASER_MIN_DISTANCE = 0.2
+INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z = -6.5, 8.5, 0.2
+INITIAL_ROTATION_X, INITIAL_ROTATION_Y, INITIAL_ROTATION_Z = 0, 0, 0
 
 class Wander:
-    def __init__(self, controlledByOneAI = False, pathSavedModelLeft = None, pathSavedModelRight = None, pathSavedModelForward = None):
+    def __init__(self, loadModel):
         
         # Variables to know if the robot is alive
-        self.laserWallCrashPatiente = 15
-        self.laserMinDistance = 0.2
-        self.isAlive = True
+        self.robotCrashedEvent = threading.Event()
+        self.timeStarted = None
+        self.timeCrashed = None
+        
+        self.checkPoint = 0
+        self.lapsCompleted = 0
+
+        # Checks of loops
+        self.lastTimeChecked = None
+        self.last_x_checked, self.last_y_checked = None, None
 
         # Subscribers to get the data and publisher to indicate the robot it's speeds
-        self.command_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
-        self.laser_sub = rospy.Subscriber('/scan', LaserScan, self.command_callback)
+        self.command_pub = None
+        self.laser_sub = None
         
         # Odometry: this is prepared for the fitness
-        self.odom_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback)
-        self.xMax, self.yMax = -math.inf, -math.inf
-        self.xMin, self.yMin =  math.inf,  math.inf
-        self.initialX, self.initialY, self.initialZ = -6.5, 8.5, 0.2
+        self.odom_sub = None
+        self.xMax, self.yMax = INITIAL_ROBOT_X, INITIAL_ROBOT_Y
+        self.xMin, self.yMin = INITIAL_ROBOT_X, INITIAL_ROBOT_Y
 
         # Movement variables
         self.forward_vel, self.rotate_vel = 0, 0
-        self.categoricalOutput = None
         
-        self.scannnerData5Points = None
-        self.scannnerDataEvery5 = None
-        self.scannnerDataEvery2 = None
+        self.previousScannnerData = None
+        self.scannerData = None
 
         # Controlled by AI
-        self.controlledByOneAI = controlledByOneAI
-        self.modelAI = None
-        self.modelLeft = None
-        self.modelRight = None
-        self.modelForward = None
+        print(f'Loaded model {loadModel}')
+        self.modelAI = keras.models.load_model(loadModel)
 
-        # Get one AI
-        if self.controlledByOneAI:
-            self.modelAI = keras.models.load_model('/home/samuel/P1_Carrera_de_robots/best_model.h5')
+    """
+        Robot data management
+    """
+    def spawnToInitialPosition(self):
+        """
+            Sends a message to spawn the object
+        """
+        print('Spawning TurtleBot...')
 
-        # Get the paths of the saved models (if any passed)
-        else:
-            self.modelLeft = keras.models.load_model(pathSavedModelLeft)
-            self.modelRight = keras.models.load_model(pathSavedModelRight)
-            self.modelForward = keras.models.load_model(pathSavedModelForward)
+        # Create publisher and message to move the model
+        spawnPub = rospy.Publisher('/gazebo/set_model_state', ModelState, queue_size=1)
+        spawnMsg = ModelState()
 
+        # Robot model name
+        spawnMsg.model_name = 'turtlebot3'
 
+        # Spawn coordinates
+        spawnMsg.pose.position.x, spawnMsg.pose.position.y, spawnMsg.pose.position.z = INITIAL_ROBOT_X, INITIAL_ROBOT_Y, INITIAL_ROBOT_Z
+
+        # Spawn orientation
+        spawnMsg.pose.orientation.x, spawnMsg.pose.orientation.y, spawnMsg.pose.orientation.z = INITIAL_ROTATION_X, INITIAL_ROTATION_Y, INITIAL_ROTATION_Z
+
+        # Send the message and close the publisher
+        time.sleep(0.5)
+        spawnPub.publish(spawnMsg)
+        time.sleep(0.5)
+        spawnPub.unregister()
+
+    
+    def getAreaRun(self):
+        xMoved = abs(self.xMax - self.xMin)
+        yMoved = abs(self.yMax - self.yMin)
+        return xMoved * yMoved
+
+    def getMovedDistances(self):
+        return abs(self.xMax - self.xMin), abs(self.yMax - self.yMin)
+
+    def getTimeAlive(self):
+        if self.timeCrashed is None or self.timeStarted is None:
+            return 0
+        return self.timeCrashed - self.timeStarted
+
+    def getRobotWeights(self):
+        return self.modelAI.get_weights()
+    
+    def setRobotWeights(self, weights):
+        self.modelAI.set_weights(weights)
+
+    """
+        Robot movement simuation
+    """
     def getAIKey(self):
         """
             Asks the models to choose a key
         """
 
-        if self.controlledByOneAI:
-            if self.modelAI is None:
-                return
-            
-            # TODO: define sensor to pick
-            predict = self.modelAI.predict([self.scannnerData5Points])
-            move = np.argmax(predict, axis=1)[0]
-            if move == 0:
-                # Left
-                self.forward_vel, self.rotate_vel = 0.2, 0.5
-                self.categoricalOutput = [1.0, 0.0, 0.0]
-            if move == 2:
-                # Right
-                self.forward_vel, self.rotate_vel = 0.2, -0.5
-                self.categoricalOutput = [0.0, 0.0, 1.0]
-            if move == 1:
-                # Forward
-                self.forward_vel, self.rotate_vel = 0.5, 0
-                self.categoricalOutput = [0.0, 1.0, 0.0]
-        else:
-            if self.modelLeft is None or self.modelRight is None or self.modelForward is None:
-                return
-            
-            # TODO: define sensor to pick
-            predictLeft = self.modelLeft.predict(np.asarray([self.scannnerData5Points]), verbose=0)
-            predictRight = self.modelRight.predict(np.asarray([self.scannnerData5Points]), verbose=0)
-            predictForward = self.modelForward.predict(np.asarray([self.scannnerData5Points]), verbose=0)
-            
-            print(f'Sensors: {self.scannnerData5Points}')
-            print(f'Predict left: {predictLeft}, Predict right: {predictRight}, Predict forward: {predictForward},')
-            
-            if np.argmax(predictLeft, axis=1)[0] == 1:
-                # Left
-                self.forward_vel, self.rotate_vel = 0.2, 0.5
-                self.categoricalOutput = [1.0, 0.0, 0.0]
+        if self.modelAI is None:
+            rospy.logerr('No model loaded!')
+            return
+        
+        # Feedforward the model to get the key to press
+        predict = self.modelAI.predict([self.scannerData], verbose=0)
+        move = np.argmax(predict, axis=1)[0]
+        if   move == 0:   # Left
+            self.forward_vel, self.rotate_vel = 0.5, 0.75
+        elif move == 2:   # Right
+            self.forward_vel, self.rotate_vel = 0.5, -0.75
+        elif move == 1:   # Forward
+            self.forward_vel, self.rotate_vel = 0.6, 0
 
-            if np.argmax(predictRight, axis=1)[0] == 1:
-                # Right
-                self.forward_vel, self.rotate_vel = 0.2, -0.5
-                self.categoricalOutput = [0.0, 0.0, 1.0]
-
-            if np.argmax(predictForward, axis=1)[0] == 1:
-                # Forward
-                self.forward_vel, self.rotate_vel = 0.5, 0
-                self.categoricalOutput = [0.0, 1.0, 0.0]
-
-    def checkNumberOfScansColliding(self, msg: LaserScan):
-        return sum(self.laserMinDistance > range for range in msg.ranges[:30]) + sum(self.laserMinDistance > range for range in msg.ranges[-30:])
-
+    def isColliding(self):
+        if self.scannerData is None or self.previousScannnerData is None:
+            return False 
+        return (    # Checks if any of the 3 frontal scanners are lower than threshold and that the data isn't disturbed by noise
+                   self.scannerData[0] < LASER_MIN_DISTANCE and abs(self.scannerData[0] - self.previousScannnerData[0]) < 0.05 
+                or self.scannerData[1] < LASER_MIN_DISTANCE and abs(self.scannerData[1] - self.previousScannnerData[1]) < 0.05
+                or self.scannerData[2] < LASER_MIN_DISTANCE and abs(self.scannerData[2] - self.previousScannnerData[2]) < 0.05
+                )
 
     def getScanValues(self, msg: LaserScan):
         """
             Get proximity sensor's lvels
         """
 
-        # Get every 5º
-        self.scannnerDataEvery5 = list(msg.ranges)
-        del self.scannnerDataEvery5[150:210]
-        self.scannnerDataEvery5 = [num if num < 5 else 5.0 for num in self.scannnerDataEvery5[0::5]]
+        self.previousScannnerData = self.scannerData
 
-        # Get every 2º
-        self.scannnerDataEvery2 = list(msg.ranges)
-        del self.scannnerDataEvery2[150:210]
-        self.scannnerDataEvery2 = [num if num < 5 else 5.0 for num in self.scannnerDataEvery2[0::2]]
-
-        # Get 5 points (forward, forward-left, forward-right, backward-left, backward-right)
-        self.scannnerData5Points = [msg.ranges[0], msg.ranges[60], msg.ranges[-60], msg.ranges[120], msg.ranges[-120]]
-        self.scannnerData5Points = [num if num < 5 else 5.0 for num in self.scannnerData5Points]
-
+        # Get 9 points (forward, forward-left, forward-right, backward-left, backward-right)
+        self.scannerData = [msg.ranges[0], msg.ranges[30], msg.ranges[-30], msg.ranges[60], msg.ranges[-60], msg.ranges[90], msg.ranges[-90], msg.ranges[120], msg.ranges[-120]]
+        self.scannerData = [min(num, LASER_MAX_DISTANCE) for num in self.scannerData]
 
     def command_callback(self, msg: LaserScan):
         """
             Reads the scanner and sends the robot's speed
         """
 
-        if self.checkNumberOfScansColliding(msg) > self.laserWallCrashPatiente:
-            rospy.logerr("The robot has collided!")
-            self.isAlive = False
+        if self.isColliding():
+            # If robot crashed, set the crashed event to stop
+            rospy.logerr('The robot has collided!')
+            self.robotCrashedEvent.set()
+            return
 
         # Get the scan values
         self.getScanValues(msg)
@@ -152,15 +171,23 @@ class Wander:
         msg.angular.z = self.rotate_vel
 
         # Publish the message
-        self.command_pub.publish(msg)
+        if not self.robotCrashedEvent.is_set():
+            self.command_pub.publish(msg)
 
+
+    """
+        Robot odometry callback
+    """
+    
 
     def odom_callback(self, msg: Odometry):
-
+        
         # Keep odometry data     
         newX = msg.pose.pose.position.x
         newY = msg.pose.pose.position.y
         
+
+        # Update the maximum coordinates achieved
         if newX < self.xMin:
             self.xMin = newX
         if newX > self.xMax:
@@ -171,21 +198,37 @@ class Wander:
         if newY > self.yMax:
             self.yMax = newY
 
-
-    def loop(self):
+    """
+        Robot simulate call
+    """
+    def simulateRobot(self):
         """
-            Loop where the player
+            Make the robot run in the circuit until it crashes
         """
 
-        # The robot is controlled by AI, stop this Thread's execution and just execute the callbacks
-        rospy.spin()
+        # Do preps for starting the robot
+        self.spawnToInitialPosition()
+        
+        # Create the publisher and subscribers
+        self.command_pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
+        self.laser_sub = rospy.Subscriber('/scan', LaserScan, self.command_callback)
+        self.odom_sub = rospy.Subscriber('/odom', Odometry, self.odom_callback)
+
+        # The robot is controlled by AI, wait until the crashed event is actived
+        self.robotCrashedEvent.wait()
+
+        # Set the time crashed
+        self.timeCrashed = time.time()
+
+        # Do preps when crashed
+        self.command_pub.unregister()
+        self.laser_sub.unregister()
+        self.odom_sub.unregister()
+
+
 
 if __name__ == '__main__':
     rospy.init_node('AI_robot_controlled')
 
-    # TODO: insert the AI
-    wand = Wander(False,
-                  '/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/models1/model_left.h5',
-                  '/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/models1/model_right.h5',
-                  '/home/samuel/P1_Carrera_de_robots/src/all_listeners/models/models1/model_up.h5')
-    wand.loop()
+    wand = Wander('/home/samuel/Carrera_Robots_VAR/src/all_listeners/10LapsModels/modelAI_20-03-2023_16:01:09.h5')
+    wand.simulateRobot()

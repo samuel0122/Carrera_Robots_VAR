@@ -1,4 +1,9 @@
 #!/usr/bin/env python3
+"""
+Backpropagation algoritm test XOR
+    @authors: Samuel Oliva Bulpitt, Luis Jesús Marhuenda Tendero
+"""
+
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 

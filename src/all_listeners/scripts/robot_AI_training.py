@@ -1,4 +1,10 @@
 #!/usr/bin/env python3
+"""
+Genetic algoritm
+    @authors: Samuel Oliva Bulpitt, Luis Jesús Marhuenda Tendero
+"""
+
+
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
@@ -185,7 +191,6 @@ class Wander:
         time.sleep(0.5)
         spawnPub.unregister()
 
-        # print('TurtleBot spawned!')
     
     def getAreaRun(self):
         xMoved = abs(self.xMax - self.xMin)
@@ -218,7 +223,7 @@ class Wander:
             rospy.logerr('No model loaded!')
             return
         
-        # TODO: define sensor to pick
+        # Feedforward the model to get the key to press
         predict = self.modelAI.predict([self.scannerData], verbose=0)
         move = np.argmax(predict, axis=1)[0]
         if   move == 0:   # Left
@@ -256,8 +261,7 @@ class Wander:
         """
 
         if self.isColliding():
-            if self.lapsCompleted > 0:
-                self.saveModel(prefix=f'goneLeft/{self.lapsCompleted}Laps-{self.checkPoint}CP-')
+            # If robot crashed, set the crashed event to stop
             rospy.logerr('The robot has collided!')
             self.robotCrashedEvent.set()
             return
@@ -290,7 +294,8 @@ class Wander:
         rospy.logerr(f'The robot has gone back from checkpoint {self.checkPoint+1} to {self.checkPoint}.')
 
     def checkGoneBack(self, newX, newY):
-
+        # Check if the robot is returning
+        
         if self.checkPoint == 0:     # Passed checkpoint 0
             if newY > 8 and newY < 10 and newX < 5:
                 self.killRobotAndBackCheckpoint()
@@ -374,8 +379,6 @@ class Wander:
             if newX > 1 and newX < 3 and newY > 0:
                 self.checkPoint = 10
         elif self.checkPoint < 11: # Checkpoint 11
-            if newX < 4 and newX > 2 and newY > 3.5:
-                self.killRobotAndBackCheckpoint()
             if newY > 1 and newY < 3 and newX < 0:
                 self.checkPoint = 11
         elif self.checkPoint < 12:  # Checkpoint 12
@@ -392,10 +395,14 @@ class Wander:
                 self.checkPoint = 0
                 self.lapsCompleted += 1
                 print(f'{bcolors.WARNING}{bcolors.BOLD}{bcolors.UNDERLINE}Compleated lap {self.lapsCompleted} in {int(time.time() - self.timeStarted)} seconds{bcolors.ENDC}')
+                
                 if self.lapsCompleted == 10:
+                    # If the model compleated 10 laps, save it separated and finish it
                     self.saveModel(save10Laps=True)
                     self.robotCrashedEvent.set()
+        
         if initPoint != self.checkPoint:
+            # Print message of reached checkpoint if changes
             print(f'{bcolors.HEADER}Reached checkpoint {self.checkPoint} {bcolors.ENDC}')
 
 
@@ -408,13 +415,15 @@ class Wander:
         self.checkPoints(newX=newX, newY=newY)
         self.checkGoneBack(newX=newX, newY=newY)
         
-        if time.time() > self.lastTimeChecked + CHECK_EVERY_SECONDS and False:
+        # If the time has passes, check for robot looped
+        if time.time() > self.lastTimeChecked + CHECK_EVERY_SECONDS:
             #Its time to check again
             if abs(self.last_x_checked - newX) < MINIMUM_DISTANCE_DIFFERENCE and abs(self.last_y_checked - newY) < MINIMUM_DISTANCE_DIFFERENCE:
                 rospy.logerr('The robot has staid in a loop')
                 self.robotCrashedEvent.set()
                 return
             
+            # If not in loop, update previous variables
             self.last_x_checked, self.last_y_checked = newX, newY
             self.lastTimeChecked = time.time()
 
@@ -484,9 +493,11 @@ def compare_robots(robot1: Wander, robot2: Wander):
     checkPoint1, laps1 = robot1.getCheckPoints()
     checkPoint2, laps2 = robot2.getCheckPoints()
     
+    # If one compleated more laps, priorize it
     if laps1 != laps2:
         return -1 if laps1 > laps2 else 1
 
+    # If one have achieved more checkpoints, priorize it
     if checkPoint1 != checkPoint2:
         return -1 if checkPoint1 > checkPoint2 else 1
     
@@ -505,13 +516,7 @@ def compare_robots(robot1: Wander, robot2: Wander):
             robot1Time = robot1.getTimeAlive()
             robot2Time = robot2.getTimeAlive()
 
-            # if robot1Time < 10 and robot2Time < 10:
-            #     # If both times are low (at beggining) put first the lowest
-            #     return -1 if robot1Time < robot2Time else 1
-            # else:
-            # If time are long, put first the one who survived more time
-            #return -1 if robot1Time > robot2Time else 1
-            # tHE ONE WHO TOOK LESS TO GET TO THE CHECKPOINT
+            # THE ONE WHO TOOK LESS TO GET TO THE SAME PLACE
             return -1 if robot1Time < robot2Time else 1
         else:
             # Same X distance, different Y distance
@@ -537,28 +542,6 @@ class Population:
         self.generation = [Wander() for _ in range(sizePopulation)]
         self.sizePopulation = sizePopulation
         self.GenVersion = 0
-    
-    def saveBestRobots(self, top_robots = 3):
-
-        # Check if the requested top if higher than avaliable
-        top_robots = top_robots if top_robots <= len(self.generation) else len(self.generation)
-
-        print(f'{bcolors.OKBLUE}Saving top {top_robots} robots of Gen{self.GenVersion}!{bcolors.ENDC}')
-
-        # Sort the robots
-        self.generation.sort(key=cmp_to_key(compare_robots))
-
-        # Get date
-        currentTime = datetime.datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
-
-        # Create folder to save if it doesn't exist
-        folder = f'tops{currentTime}'
-        if not os.path.exists(STATES_SAVE_DIRECTORY + folder):
-            os.mkdir(STATES_SAVE_DIRECTORY + folder)
-
-        # Save models
-        for i in range(top_robots):
-            self.generation[i].saveModel(f'{folder}/model_top{i}_{currentTime}')
 
     def saveState(self, fileList):
 
@@ -586,6 +569,7 @@ class Population:
             f.write('\n'.join(filesSaved))
     
     def loadState(self, listFile):
+        # Load a saved training state
         modelsFiles = []
         print(f'{bcolors.OKBLUE}Loading state {listFile}{bcolors.ENDC}')
 
@@ -597,6 +581,7 @@ class Population:
         self.generation = [Wander(loadModel=modelFile) for modelFile in modelsFiles]
 
     def simulateGeneration(self):
+        # For each robot, call it to simulate
         for i in range(self.sizePopulation):
             print(f'{bcolors.OKGREEN}Simulating robot {i+1} of {self.sizePopulation}...{bcolors.ENDC}')
             self.generation[i].simulateRobot()
@@ -606,7 +591,7 @@ class Population:
 
         print(f'{bcolors.OKCYAN}Creating Gen{self.GenVersion} of robots!{bcolors.ENDC}')
         
-        # Sort the robots
+        # Sort the robots by fitness function
         self.generation.sort(key=cmp_to_key(compare_robots))
         
         print([r.getTimeAlive() for  r in self.generation])
@@ -622,12 +607,9 @@ class Population:
         robot6Weights = mutateWeights(model_weights=robot3Weights, mutation_range=self.MUTATION_RANGE, mutation_rate=self.MUTATION_RATE)
 
         # Crossover top 3 in to 3 new ones
-        #robot7Weights = crossover_models_weight(model1_weights=robot1Weights, model2_weights=robot2Weights, crossover_rate=self.CROSSOVER_RATE)
-        #robot8Weights = crossover_models_weight(model1_weights=robot1Weights, model2_weights=robot3Weights, crossover_rate=self.CROSSOVER_RATE)
-        #robot9Weights = crossover_models_weight(model1_weights=robot2Weights, model2_weights=robot3Weights, crossover_rate=self.CROSSOVER_RATE)
-        robot7Weights = mutateWeights(model_weights=robot1Weights, mutation_range=self.MUTATION_RANGE, mutation_rate=self.MUTATION_RATE)
-        robot8Weights = mutateWeights(model_weights=robot2Weights, mutation_range=self.MUTATION_RANGE, mutation_rate=self.MUTATION_RATE)
-        robot9Weights = mutateWeights(model_weights=robot3Weights, mutation_range=self.MUTATION_RANGE, mutation_rate=self.MUTATION_RATE)
+        robot7Weights = crossover_models_weight(model1_weights=robot1Weights, model2_weights=robot2Weights, crossover_rate=self.CROSSOVER_RATE)
+        robot8Weights = crossover_models_weight(model1_weights=robot1Weights, model2_weights=robot3Weights, crossover_rate=self.CROSSOVER_RATE)
+        robot9Weights = crossover_models_weight(model1_weights=robot2Weights, model2_weights=robot3Weights, crossover_rate=self.CROSSOVER_RATE)
 
         # Update weights
         self.generation[3].setRobotWeights(robot4Weights)

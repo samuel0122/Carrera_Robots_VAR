@@ -38,14 +38,8 @@ class Wander:
         try:
             cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
             cv2.imshow('viewRGB', cv_image)
-            print('imshow')
-            
-            cv2.destroyAllWindows()
-            print('destroy')
-            cv2.waitKey(0)
-            print('wait0')
+            print('Image CALLBACK')
             cv2.waitKey(1)
-            print('Image responde')
         except ...:
             rospy.logerr('Could not convert from \'{msg.encoding}\' to \'bgr8\'.')
 
@@ -138,6 +132,7 @@ class Wander:
         if self.displayRGBImage:
             cv2.namedWindow('viewRGB')
             cv2.startWindowThread()
+            cv2.resizeWindow('viewRGB', 700, 300)
         elif self.displayDepthImage:
             cv2.namedWindow('viewDepth')
             cv2.startWindowThread()

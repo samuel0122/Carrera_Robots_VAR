@@ -27,7 +27,6 @@ saveSensorData = False
 # If save camera images
 saveCamaraData = True
 everyXSeconds = 1
-folderToSaveImages = '/home/samuel/P1_Carrera_de_robots/Imagenes/'
 
 # If display camera view
 displayCameraView = True

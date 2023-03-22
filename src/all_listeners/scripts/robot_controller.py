@@ -33,7 +33,7 @@ class Wander:
         self.initialX, self.initialY, self.initialZ = -6.5, 8.5, 0.2
 
         # Video sub
-        displayVideo = False
+        displayVideo = True
         self.image_sub = None
 
         if displayVideo:

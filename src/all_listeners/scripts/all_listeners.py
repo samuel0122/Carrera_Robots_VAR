@@ -38,7 +38,14 @@ class Wander:
         try:
             cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
             cv2.imshow('viewRGB', cv_image)
-            cv2.waitKey(30)
+            print('imshow')
+            
+            cv2.destroyAllWindows()
+            print('destroy')
+            cv2.waitKey(0)
+            print('wait0')
+            cv2.waitKey(1)
+            print('Image responde')
         except ...:
             rospy.logerr('Could not convert from \'{msg.encoding}\' to \'bgr8\'.')
 
@@ -73,14 +80,14 @@ class Wander:
 
     def command_callback(self, msg: LaserScan):
 
-        rospy.loginfo(f'Scan message recieved with {len(msg.ranges)} ranges')
+        # rospy.loginfo(f'Scan message recieved with {len(msg.ranges)} ranges')
 
         scannnerData = [msg.ranges[0], msg.ranges[60], msg.ranges[-60], msg.ranges[120], msg.ranges[-120]]
         scannnerData = [num if num < 5 else 5.0 for num in scannnerData]
 
-        print()
-        print(scannnerData)
-        print()
+        # print()
+        # print(scannnerData)
+        # print()
 
         # Process laser 
         minDistances  = len([True for range in msg.ranges[ :30] if range < self.laserMinDistance])
@@ -153,5 +160,5 @@ class Wander:
 
 if __name__ == '__main__':
     rospy.init_node('all_listeners')  # Initialize a new node called 'wander'.
-    wand = Wander()  # Create an object of this class and associate it with the ROS system.
+    wand = Wander(displayRGBImage=True)  # Create an object of this class and associate it with the ROS system.
     wand.loop()  # Run the main loop.

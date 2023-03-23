@@ -32,7 +32,7 @@ everyXSeconds = 1
 displayCameraView = True
 
 COLORS = ['red', 'green', 'blue', 'yellow', 'purple']
-FONT_SIZE = 20
+FONT_SIZE = 30
 RECTANGLE_WIDHT = 3
 
 """
@@ -116,29 +116,29 @@ class Wander:
         boxes = resultYolo.pandas().xyxy[0][['xmin', 'ymin', 'xmax', 'ymax']].values
         labels = resultYolo.pandas().xyxy[0]['name'].values
         classes = resultYolo.pandas().xyxy[0]['class'].values
+        confidences = resultYolo.pandas().xyxy[0]['confidence'].values
         
+        print('Detecting:')
         # Draw bounding boxes and labels on image
-        for box, label, classNum in zip(boxes, labels, classes):
-            x0, y0, x1, y1 = box.astype(int)
-            draw.rectangle([(x0, y0), (x1, y1)], outline=COLORS[classNum], width=RECTANGLE_WIDHT)
-            draw.text((x0+RECTANGLE_WIDHT+1, y0-FONT_SIZE-1), label, fill=COLORS[classNum], font=font)
-        
+        for box, label, classNum, confidence in zip(boxes, labels, classes, confidences):
+            if confidence > 0.5:
+                x0, y0, x1, y1 = box.astype(int)
+                draw.rectangle([(x0, y0), (x1, y1)], outline=COLORS[classNum], width=RECTANGLE_WIDHT)
+                draw.text((x0+RECTANGLE_WIDHT+1, y0-FONT_SIZE-1), label, fill=COLORS[classNum], font=font)
+                print(f'\t{label}\t{confidence} probability.')
+        print()
         return image
   
     def imageRGB_callback(self, msg: Image):
         if displayCameraView:
             try:
-                print('Image callback')
                 
                 cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
                 results = self.model(cv_image)
                 PIL_image = self.drawImageWithBoxes(resultYolo=results, image=PILImage.fromarray(cv_image))
-                print('imshow')
-                #cv2.imshow('viewRGB', cv2.UMat(np.array(PIL_image)))
-                cv2.imshow('viewRGB', cv_image)
-                print('wait')
+                cv2.imshow('viewRGB', cv2.UMat(np.array(PIL_image)))
+                # cv2.imshow('viewRGB', cv_image)
                 cv2.waitKey(1)
-                print('end wait')
             except ...:
                 rospy.logerr('Could not convert from \'{msg.encoding}\' to \'bgr8\'.')
 
@@ -156,5 +156,7 @@ class Wander:
 if __name__ == '__main__':
     rospy.init_node('player_controlled_saver_robot')
 
-    wand = Wander(detectObjectModelPath='/home/samuel/Carrera_Robots_VAR/src/all_listeners/models/yolo-weights.pt')
+    wand = Wander(detectObjectModelPath='/home/samuel/Carrera_Robots_VAR/src/all_listeners/models/yolo_best.pt')
+    
+    time.sleep(2)
     wand.loop()

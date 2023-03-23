@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Robot controlled by keyboard saving data
+Robot controlled by keyboard that loads object detection YOLO model
     @authors: Samuel Oliva Bulpitt, Luis Jesús Marhuenda Tendero
 """
 

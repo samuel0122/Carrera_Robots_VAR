@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Backpropagation algoritm test XOR
+Genetic algoritm test XOR
     @authors: Samuel Oliva Bulpitt, Luis Jesús Marhuenda Tendero
 """
 

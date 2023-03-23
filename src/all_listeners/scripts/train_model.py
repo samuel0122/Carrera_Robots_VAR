@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Backpropagation algoritm
+Backpropagation algoritm to try train with labeled dataset
     @authors: Samuel Oliva Bulpitt, Luis Jesús Marhuenda Tendero
 """
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Genetic algoritm
+Genetic algoritm to train model
     @authors: Samuel Oliva Bulpitt, Luis Jesús Marhuenda Tendero
 """
 

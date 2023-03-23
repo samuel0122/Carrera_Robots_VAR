@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+"""
+Script to test topics messages reception and sending
+    @authors: Samuel Oliva Bulpitt, Luis Jesús Marhuenda Tendero
+"""
 
 import rospy
 from geometry_msgs.msg import Twist

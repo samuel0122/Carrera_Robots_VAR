@@ -3039,115 +3039,125 @@
       <static>1</static>
     </model>
     <state world_name='default'>
-      <sim_time>1901 390000000</sim_time>
-      <real_time>545 265161885</real_time>
-      <wall_time>1679488326 407910217</wall_time>
-      <iterations>54421</iterations>
+      <sim_time>1025 660000000</sim_time>
+      <real_time>998 237586606</real_time>
+      <wall_time>1679563209 727261245</wall_time>
+      <iterations>99676</iterations>
       <model name='apartment'>
-        <pose>-2.40259 19.1758 0 0 -0 0</pose>
-        <scale>0.067238 0.067238 0.067238</scale>
+        <pose>-39.8335 18.4571 0 0 -0 0</pose>
+        <scale>0.082441 0.082441 0.082441</scale>
         <link name='link'>
-          <pose>-2.40259 19.1758 0 0 -0 0</pose>
+          <pose>-39.8335 18.4571 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='apartment_clone'>
-        <pose>0.923526 24.8769 0 0 0 -1.55836</pose>
+        <pose>-39.9425 20.5898 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>0.923526 24.8769 0 0 0 -1.55836</pose>
+          <pose>-39.9425 20.5898 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='apartment_clone_0'>
-        <pose>-0.572419 20.423 0 0 -0 1.56574</pose>
+        <pose>-39.305 23.687 0 0 0 -1.56177</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-0.572419 20.423 0 0 -0 1.56574</pose>
+          <pose>-39.305 23.687 0 0 0 -1.56177</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 0 0 -0 0</acceleration>
+          <wrench>0 0 0 0 -0 0</wrench>
+        </link>
+      </model>
+      <model name='apartment_clone_0_clone'>
+        <pose>-39.0254 14.6157 0 0 0 -1.56177</pose>
+        <scale>1 1 1</scale>
+        <link name='link'>
+          <pose>-39.0254 14.6157 0 0 0 -1.56177</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='beer'>
-        <pose>-3.74237 22.7016 0.008545 0.015568 0.15597 -1.39433</pose>
+        <pose>-33.4348 16.5746 -0.00088 5e-05 -1e-05 -0.00142</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-3.741 22.6837 0.122136 0.015568 0.15597 -1.39433</pose>
-          <velocity>-0.222028 -0.030305 4.3e-05 -2.88888 -1.30063 3.06054</velocity>
-          <acceleration>-0.51417 2.60285 -4.3e-05 0.162399 1.3035 -2.32221</acceleration>
-          <wrench>-0.200526 1.01511 -1.7e-05 0 -0 0</wrench>
+          <pose>-33.4348 16.5746 0.11412 5e-05 -1e-05 -0.00142</pose>
+          <velocity>0 0 0 0 -0 0</velocity>
+          <acceleration>0 0 -9.8 0 -0 0</acceleration>
+          <wrench>0 0 -3.822 0 -0 0</wrench>
         </link>
       </model>
       <model name='beer_clone'>
-        <pose>-3.82863 23.0024 -0.00088 -1.1e-05 5e-05 -1.97437</pose>
+        <pose>-33.4654 17.5289 -0.00088 5e-05 -1e-05 -0.001421</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-3.82864 23.0024 0.11412 -1.1e-05 5e-05 -1.97437</pose>
+          <pose>-33.4654 17.5289 0.11412 5e-05 -1e-05 -0.001421</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 -9.8 0 -0 0</acceleration>
           <wrench>0 0 -3.822 0 -0 0</wrench>
         </link>
       </model>
-      <model name='beer_clone_0'>
-        <pose>-3.95723 23.3158 -0.00088 5.1e-05 1e-06 -0.218488</pose>
+      <model name='beer_clone_clone'>
+        <pose>-33.489 18.8404 0.000188 -0.002211 0.002716 0.044768</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-3.95723 23.3158 0.11412 5.1e-05 1e-06 -0.218488</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 -9.8 0 -0 0</acceleration>
-          <wrench>0 0 -3.822 0 -0 0</wrench>
+          <pose>-33.4887 18.8407 0.115188 -0.002211 0.002716 0.044768</pose>
+          <velocity>0.002595 0.002314 0.011287 -0.019882 0.022312 8.3e-05</velocity>
+          <acceleration>-4.41983 -3.93928 4.12532 2.85605 -0.751721 0.001638</acceleration>
+          <wrench>-1.72373 -1.53632 1.60888 0 -0 0</wrench>
         </link>
       </model>
-      <model name='beer_clone_1'>
-        <pose>-4.03706 23.6248 -0.00088 4.5e-05 2.4e-05 -0.676272</pose>
+      <model name='beer_clone_clone_clone'>
+        <pose>-34.6122 15.6589 -5.3e-05 -0.000711 0.000583 -0.000729</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-4.03706 23.6248 0.11412 4.5e-05 2.4e-05 -0.676272</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 -9.8 0 -0 0</acceleration>
-          <wrench>0 0 -3.822 0 -0 0</wrench>
+          <pose>-34.6121 15.659 0.114947 -0.000711 0.000583 -0.000729</pose>
+          <velocity>0.013341 0.016238 -0.000285 -0.141297 0.116087 -0</velocity>
+          <acceleration>2.66819 3.24762 -0 0.015012 -1.22625 -3.14159</acceleration>
+          <wrench>1.04059 1.26657 -0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='beer_clone_2'>
-        <pose>-3.92646 23.9991 -0.00088 4.1e-05 -3e-05 0.825388</pose>
+      <model name='beer_clone_clone_clone_0'>
+        <pose>-34.9412 22.116 -5.3e-05 0.000711 -0.000583 -0.000729</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-3.92646 23.9991 0.11412 4.1e-05 -3e-05 0.825388</pose>
-          <velocity>0 0 0 0 -0 0</velocity>
-          <acceleration>0 0 -9.8 0 -0 0</acceleration>
-          <wrench>0 0 -3.822 0 -0 0</wrench>
+          <pose>-34.9413 22.1159 0.114947 0.000711 -0.000583 -0.000729</pose>
+          <velocity>-0.013341 -0.016238 -0.000285 0.141297 -0.116087 -0</velocity>
+          <acceleration>-2.66819 -3.24762 -0 -0.015012 1.22625 3.14159</acceleration>
+          <wrench>-1.04059 -1.26657 -0 0 -0 0</wrench>
         </link>
       </model>
       <model name='fountain'>
-        <pose>-3.75623 20.0362 0 0 -0 0</pose>
-        <scale>0.164916 0.164916 0.164916</scale>
+        <pose>-39.4989 16.267 0 0 -0 0</pose>
+        <scale>0.267475 0.267475 0.267475</scale>
         <link name='link'>
-          <pose>-3.75623 20.0362 0 0 -0 0</pose>
+          <pose>-39.4989 16.267 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='fountain_clone'>
-        <pose>0.144463 21.6608 0 0 -0 0</pose>
+        <pose>-36.117 23.2012 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>0.144463 21.6608 0 0 -0 0</pose>
+          <pose>-36.117 23.2012 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='fountain_clone_0'>
-        <pose>0.789319 23.7086 0 0 -0 0</pose>
+        <pose>-33.3758 21.2141 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>0.789319 23.7086 0 0 -0 0</pose>
+          <pose>-33.3758 21.2141 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -3164,55 +3174,55 @@
         </link>
       </model>
       <model name='postbox'>
-        <pose>-0.922157 25.3507 0 0 -0 0</pose>
-        <scale>0.409422 0.409422 0.409422</scale>
+        <pose>-35.9924 15.0638 0 0 0 -3.12118</pose>
+        <scale>0.250551 0.250551 0.250551</scale>
         <link name='link'>
-          <pose>-0.922157 25.3507 0 0 -0 0</pose>
+          <pose>-35.9924 15.0638 0 0 0 -3.12118</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='postbox_clone'>
-        <pose>-0.478684 23.3368 0 0 0 -1.72224</pose>
-        <scale>0.26039 0.26039 0.26039</scale>
+        <pose>-38.6479 19.5098 0 0 -0 1.55478</pose>
+        <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-0.478684 23.3368 0 0 0 -1.72224</pose>
+          <pose>-38.6479 19.5098 0 0 -0 1.55478</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
-      <model name='postbox_clone_clone'>
-        <pose>-0.033721 21.943 0 0 0 -1.72224</pose>
-        <scale>0.291171 0.291171 0.291171</scale>
+      <model name='postbox_clone_0'>
+        <pose>-37.4712 23.1531 0 0 -0 0.11153</pose>
+        <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-0.033721 21.943 0 0 0 -1.72224</pose>
+          <pose>-37.4712 23.1531 0 0 -0 0.11153</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
         </link>
       </model>
       <model name='turtlebot3'>
-        <pose>-2.17393 23.1813 -0.001051 -0.003132 0.01041 -1.72511</pose>
+        <pose>-6.24245 8.70612 -0.001 0.003288 0.010331 -2.53039</pose>
         <scale>1 1 1</scale>
         <link name='base_footprint'>
-          <pose>-2.17393 23.1813 -0.001051 -0.003132 0.01041 -1.72511</pose>
-          <velocity>0.001045 0.009465 0.003978 0.218684 -0.068006 0.293238</velocity>
-          <acceleration>-0.183077 0.036245 -0.074002 -2.73244 1.26824 -2.33778</acceleration>
-          <wrench>-0.27405 0.054255 -0.110774 0 -0 0</wrench>
+          <pose>-6.24245 8.70612 -0.001 0.003288 0.010331 -2.53039</pose>
+          <velocity>0.021101 0.004052 0.004714 0.150828 -0.158833 0.189328</velocity>
+          <acceleration>0.015139 -0.140082 0.277006 2.24458 -0.922298 0.276198</acceleration>
+          <wrench>0.022661 -0.20969 0.414653 0 -0 0</wrench>
         </link>
         <link name='wheel_left_link'>
-          <pose>-2.0316 23.1587 0.03207 1.58154 1.25625 1.42656</pose>
-          <velocity>0.00649 0.043344 0.005848 -0.681819 0.115856 0.326972</velocity>
-          <acceleration>0.008689 -0.014025 -0.300848 1.26392 -0.874612 2.29446</acceleration>
-          <wrench>0.000248 -0.0004 -0.008574 0 -0 0</wrench>
+          <pose>-6.16017 8.5881 0.032896 -1.83535 1.54162 -2.79485</pose>
+          <velocity>0.037846 0.015739 -0.000555 -0.300012 0.563629 0.184993</velocity>
+          <acceleration>0.105244 0.098031 -0.013805 -2.10545 -0.866476 2.37073</acceleration>
+          <wrench>0.002999 0.002794 -0.000393 0 -0 0</wrench>
         </link>
         <link name='wheel_right_link'>
-          <pose>-2.31628 23.2031 0.032853 -1.58669 0.498454 -1.73371</pose>
-          <velocity>-0.009669 -0.039773 -0.00211 1.12626 -0.287956 0.343796</velocity>
-          <acceleration>-0.657372 0.06219 -0.280567 2.76564 -0.70379 1.26079</acceleration>
-          <wrench>-0.018734 0.001772 -0.007996 0 -0 0</wrench>
+          <pose>-6.32559 8.8239 0.032173 -1.5748 -0.89767 -2.52625</pose>
+          <velocity>-0.00747 -0.016878 0.005948 0.752607 -0.568944 0.282961</velocity>
+          <acceleration>0.021661 -0.039512 -0.145351 2.44876 -0.40509 -0.405734</acceleration>
+          <wrench>0.000617 -0.001126 -0.004142 0 -0 0</wrench>
         </link>
       </model>
       <model name='unit_box_1'>
@@ -3466,10 +3476,10 @@
         </link>
       </model>
       <model name='unit_box_32'>
-        <pose>-3.01063 3.0994 0 0 -0 0</pose>
+        <pose>-3 3 0 0 -0 0</pose>
         <scale>1 1 1</scale>
         <link name='link'>
-          <pose>-3.01063 3.0994 0 0 -0 0</pose>
+          <pose>-3 3 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
@@ -3731,7 +3741,7 @@
     </state>
     <gui fullscreen='0'>
       <camera name='user_camera'>
-        <pose>-9.76624 22.0764 6.33457 -0 0.627642 -0.002982</pose>
+        <pose>-23.5993 18.7605 8.86171 0 0.679541 3.13923</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
@@ -4226,6 +4236,158 @@
       </plugin>
       <pose>-6.5 8.5 0.2 0 -0 0</pose>
     </model>
+    <model name='apartment'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://apartment/meshes/apartment.dae</uri>
+              <scale>0.082441 0.082441 0.082441</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://apartment/meshes/apartment.dae</uri>
+              <scale>0.082441 0.082441 0.082441</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>-22.4161 22.0603 0 0 -0 0</pose>
+    </model>
+    <model name='apartment_clone'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://apartment/meshes/apartment.dae</uri>
+              <scale>0.082441 0.082441 0.082441</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://apartment/meshes/apartment.dae</uri>
+              <scale>0.082441 0.082441 0.082441</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>-39.9425 20.5898 0 0 -0 0</pose>
+    </model>
+    <model name='apartment_clone_0'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://apartment/meshes/apartment.dae</uri>
+              <scale>0.082441 0.082441 0.082441</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://apartment/meshes/apartment.dae</uri>
+              <scale>0.082441 0.082441 0.082441</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>-39.892 23.1781 0 0 -0 0</pose>
+    </model>
+    <model name='apartment_clone_0_clone'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://apartment/meshes/apartment.dae</uri>
+              <scale>0.082441 0.082441 0.082441</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://apartment/meshes/apartment.dae</uri>
+              <scale>0.082441 0.082441 0.082441</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>-40.161 15.4637 0 0 0 -1.56177</pose>
+    </model>
     <model name='beer'>
       <link name='link'>
         <pose>0 0 0.115 0 -0 0</pose>
@@ -4281,45 +4443,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-3.40816 2.07747 0 0 -0 0</pose>
-    </model>
-    <model name='apartment'>
-      <static>1</static>
-      <link name='link'>
-        <collision name='collision'>
-          <geometry>
-            <mesh>
-              <uri>model://apartment/meshes/apartment.dae</uri>
-              <scale>0.067238 0.067238 0.067238</scale>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://apartment/meshes/apartment.dae</uri>
-              <scale>0.067238 0.067238 0.067238</scale>
-            </mesh>
-          </geometry>
-        </visual>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <pose>-4.29449 21.3017 0 0 -0 0</pose>
+      <pose>-33.4348 16.5746 0 0 -0 0</pose>
     </model>
     <model name='fountain'>
       <static>1</static>
@@ -4328,7 +4452,7 @@
           <geometry>
             <mesh>
               <uri>model://fountain/meshes/fountain.dae</uri>
-              <scale>0.164916 0.164916 0.164916</scale>
+              <scale>0.267475 0.267475 0.267475</scale>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -4349,7 +4473,7 @@
           <geometry>
             <mesh>
               <uri>model://fountain/meshes/fountain.dae</uri>
-              <scale>0.164916 0.164916 0.164916</scale>
+              <scale>0.267475 0.267475 0.267475</scale>
             </mesh>
           </geometry>
         </visual>
@@ -4357,45 +4481,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-4.26575 20.6829 0 0 -0 0</pose>
-    </model>
-    <model name='postbox'>
-      <static>1</static>
-      <link name='link'>
-        <collision name='collision'>
-          <geometry>
-            <mesh>
-              <uri>model://postbox/meshes/postbox.dae</uri>
-              <scale>0.409422 0.409422 0.409422</scale>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://postbox/meshes/postbox.dae</uri>
-              <scale>0.409422 0.409422 0.409422</scale>
-            </mesh>
-          </geometry>
-        </visual>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <pose>-0.922157 25.3507 0 0 -0 0</pose>
+      <pose>-36.4601 14.1432 0 0 -0 0</pose>
     </model>
     <model name='fountain_clone'>
       <static>1</static>
@@ -4404,7 +4490,7 @@
           <geometry>
             <mesh>
               <uri>model://fountain/meshes/fountain.dae</uri>
-              <scale>0.164916 0.164916 0.164916</scale>
+              <scale>0.267475 0.267475 0.267475</scale>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -4425,7 +4511,7 @@
           <geometry>
             <mesh>
               <uri>model://fountain/meshes/fountain.dae</uri>
-              <scale>0.164916 0.164916 0.164916</scale>
+              <scale>0.267475 0.267475 0.267475</scale>
             </mesh>
           </geometry>
         </visual>
@@ -4433,16 +4519,16 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-0.222806 21.4116 0 0 -0 0</pose>
+      <pose>-36.117 23.2012 0 0 -0 0</pose>
     </model>
-    <model name='fountain_clone_0'>
+    <model name='postbox'>
       <static>1</static>
       <link name='link'>
         <collision name='collision'>
           <geometry>
             <mesh>
-              <uri>model://fountain/meshes/fountain.dae</uri>
-              <scale>0.164916 0.164916 0.164916</scale>
+              <uri>model://postbox/meshes/postbox.dae</uri>
+              <scale>0.250551 0.250551 0.250551</scale>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -4462,8 +4548,8 @@
         <visual name='visual'>
           <geometry>
             <mesh>
-              <uri>model://fountain/meshes/fountain.dae</uri>
-              <scale>0.164916 0.164916 0.164916</scale>
+              <uri>model://postbox/meshes/postbox.dae</uri>
+              <scale>0.250551 0.250551 0.250551</scale>
             </mesh>
           </geometry>
         </visual>
@@ -4471,7 +4557,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>0.012193 23.5495 0 0 -0 0</pose>
+      <pose>-35.9924 15.0638 0 0 -0 0</pose>
     </model>
     <model name='postbox_clone'>
       <static>1</static>
@@ -4480,7 +4566,7 @@
           <geometry>
             <mesh>
               <uri>model://postbox/meshes/postbox.dae</uri>
-              <scale>0.26039 0.26039 0.26039</scale>
+              <scale>0.250551 0.250551 0.250551</scale>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -4501,7 +4587,7 @@
           <geometry>
             <mesh>
               <uri>model://postbox/meshes/postbox.dae</uri>
-              <scale>0.26039 0.26039 0.26039</scale>
+              <scale>0.250551 0.250551 0.250551</scale>
             </mesh>
           </geometry>
         </visual>
@@ -4509,92 +4595,16 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-0.820223 20.8606 0 0 -0 0</pose>
+      <pose>-38.6479 19.5098 0 0 0 -3.12118</pose>
     </model>
-    <model name='apartment_clone'>
-      <static>1</static>
-      <link name='link'>
-        <collision name='collision'>
-          <geometry>
-            <mesh>
-              <uri>model://apartment/meshes/apartment.dae</uri>
-              <scale>0.067238 0.067238 0.067238</scale>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://apartment/meshes/apartment.dae</uri>
-              <scale>0.067238 0.067238 0.067238</scale>
-            </mesh>
-          </geometry>
-        </visual>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <pose>1.0919 24.1919 0 0 -0 0</pose>
-    </model>
-    <model name='apartment_clone_0'>
-      <static>1</static>
-      <link name='link'>
-        <collision name='collision'>
-          <geometry>
-            <mesh>
-              <uri>model://apartment/meshes/apartment.dae</uri>
-              <scale>0.067238 0.067238 0.067238</scale>
-            </mesh>
-          </geometry>
-          <max_contacts>10</max_contacts>
-          <surface>
-            <contact>
-              <ode/>
-            </contact>
-            <bounce/>
-            <friction>
-              <torsional>
-                <ode/>
-              </torsional>
-              <ode/>
-            </friction>
-          </surface>
-        </collision>
-        <visual name='visual'>
-          <geometry>
-            <mesh>
-              <uri>model://apartment/meshes/apartment.dae</uri>
-              <scale>0.067238 0.067238 0.067238</scale>
-            </mesh>
-          </geometry>
-        </visual>
-        <self_collide>0</self_collide>
-        <enable_wind>0</enable_wind>
-        <kinematic>0</kinematic>
-      </link>
-      <pose>1.07629 20.9105 0 0 -0 0</pose>
-    </model>
-    <model name='postbox_clone_clone'>
+    <model name='postbox_clone_0'>
       <static>1</static>
       <link name='link'>
         <collision name='collision'>
           <geometry>
             <mesh>
               <uri>model://postbox/meshes/postbox.dae</uri>
-              <scale>0.291171 0.291171 0.291171</scale>
+              <scale>0.250551 0.250551 0.250551</scale>
             </mesh>
           </geometry>
           <max_contacts>10</max_contacts>
@@ -4615,7 +4625,7 @@
           <geometry>
             <mesh>
               <uri>model://postbox/meshes/postbox.dae</uri>
-              <scale>0.291171 0.291171 0.291171</scale>
+              <scale>0.250551 0.250551 0.250551</scale>
             </mesh>
           </geometry>
         </visual>
@@ -4623,7 +4633,7 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-0.042782 21.9476 0 0 0 -1.72224</pose>
+      <pose>-37.4712 23.1531 0 0 0 -3.12118</pose>
     </model>
     <model name='beer_clone'>
       <link name='link'>
@@ -4680,9 +4690,9 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-3.82863 23.0024 0 2.8e-05 -7e-06 -0.00341</pose>
+      <pose>-33.4654 17.5289 -0.00088 5e-05 -1e-05 -0.001122</pose>
     </model>
-    <model name='beer_clone_0'>
+    <model name='beer_clone_clone'>
       <link name='link'>
         <pose>0 0 0.115 0 -0 0</pose>
         <inertial>
@@ -4737,9 +4747,9 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-3.95723 23.3158 0 2.8e-05 -7e-06 -0.00341</pose>
+      <pose>-33.489 18.8404 0 2.8e-05 -7e-06 -0.001182</pose>
     </model>
-    <model name='beer_clone_1'>
+    <model name='beer_clone_clone_clone'>
       <link name='link'>
         <pose>0 0 0.115 0 -0 0</pose>
         <inertial>
@@ -4794,9 +4804,9 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-4.03706 23.6248 0 2.8e-05 -7e-06 -0.00341</pose>
+      <pose>-34.6122 15.6589 0.000188 -0.002434 0.002518 -0.001067</pose>
     </model>
-    <model name='beer_clone_2'>
+    <model name='beer_clone_clone_clone_0'>
       <link name='link'>
         <pose>0 0 0.115 0 -0 0</pose>
         <inertial>
@@ -4851,7 +4861,45 @@
         <enable_wind>0</enable_wind>
         <kinematic>0</kinematic>
       </link>
-      <pose>-3.92646 23.9991 0 2.8e-05 -7e-06 -0.00341</pose>
+      <pose>-34.9412 22.116 0.000188 -0.002434 0.002518 -0.001067</pose>
+    </model>
+    <model name='fountain_clone_0'>
+      <static>1</static>
+      <link name='link'>
+        <collision name='collision'>
+          <geometry>
+            <mesh>
+              <uri>model://fountain/meshes/fountain.dae</uri>
+              <scale>0.267475 0.267475 0.267475</scale>
+            </mesh>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <mesh>
+              <uri>model://fountain/meshes/fountain.dae</uri>
+              <scale>0.267475 0.267475 0.267475</scale>
+            </mesh>
+          </geometry>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_wind>0</enable_wind>
+        <kinematic>0</kinematic>
+      </link>
+      <pose>-33.3758 21.2141 0 0 -0 0</pose>
     </model>
   </world>
 </sdf>

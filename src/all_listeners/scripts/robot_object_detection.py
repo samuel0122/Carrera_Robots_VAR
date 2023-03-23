@@ -130,12 +130,15 @@ class Wander:
             try:
                 print('Image callback')
                 
-                cv_image = CvBridge().imgmsg_to_cv2(msg, "rgb8")
+                cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
                 results = self.model(cv_image)
                 PIL_image = self.drawImageWithBoxes(resultYolo=results, image=PILImage.fromarray(cv_image))
-                cv2.imshow('viewRGB', cv2.UMat(np.array(PIL_image)))
-                # cv2.imshow('viewRGB', cv_image)
+                print('imshow')
+                #cv2.imshow('viewRGB', cv2.UMat(np.array(PIL_image)))
+                cv2.imshow('viewRGB', cv_image)
+                print('wait')
                 cv2.waitKey(1)
+                print('end wait')
             except ...:
                 rospy.logerr('Could not convert from \'{msg.encoding}\' to \'bgr8\'.')
 

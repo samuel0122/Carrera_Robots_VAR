@@ -53,6 +53,8 @@ class Wander:
         
         self.previousScannnerData = None
         self.scannerData = None
+        
+        self.timesKey = [0, 0, 0]
 
         # Controlled by AI
         print(f'Loaded model {loadModel}')
@@ -127,6 +129,10 @@ class Wander:
             self.forward_vel, self.rotate_vel = 0.5, -0.75
         elif move == 1:   # Forward
             self.forward_vel, self.rotate_vel = 0.6, 0
+            
+        self.timesKey[move] += 1
+        
+        print(f'[Left, Forward, Right] = [\t{self.timesKey[0]},\t{self.timesKey[1]},\t{self.timesKey[2]}]')
 
     def isColliding(self):
         if self.scannerData is None or self.previousScannnerData is None:
@@ -231,4 +237,5 @@ if __name__ == '__main__':
     rospy.init_node('AI_robot_controlled')
 
     wand = Wander('/home/samuel/Carrera_Robots_VAR/src/all_listeners/10LapsModels/modelAI_20-03-2023_16:01:09.h5')
+    # wand = Wander('/home/samuel/Carrera_Robots_VAR/src/all_listeners/3LapsModels/modelAI_16-03-2023_22:08:28.h5')
     wand.simulateRobot()

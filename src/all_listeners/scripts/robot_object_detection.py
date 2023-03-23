@@ -60,7 +60,7 @@ class Wander:
         self.rotate_vel = 0
         
         # Default key
-        self.keyInserted = 'w'
+        self.keyInserted = 'a'
         
 
     def __del__(self):
@@ -72,10 +72,10 @@ class Wander:
         """
 
         if self.keyInserted == 'a':  # Left
-            self.forward_vel, self.rotate_vel = 0, 0.5
+            self.forward_vel, self.rotate_vel = 0, 0.2
 
         elif self.keyInserted == 'd':# Right
-            self.forward_vel, self.rotate_vel = 0, -0.5
+            self.forward_vel, self.rotate_vel = 0, -0.2
 
         elif self.keyInserted == 'w':# Forward
             self.forward_vel, self.rotate_vel = 0.3, 0
@@ -133,9 +133,9 @@ class Wander:
                 cv_image = CvBridge().imgmsg_to_cv2(msg, "rgb8")
                 results = self.model(cv_image)
                 PIL_image = self.drawImageWithBoxes(resultYolo=results, image=PILImage.fromarray(cv_image))
-                cv2.imshow('viewRGB', cv2.UMat( np.array(PIL_image)))
-                # cv2.imshow('viewRGB', CvBridge().imgmsg_to_cv2(msg, "rgb8"))
-                cv2.waitKey(30)
+                cv2.imshow('viewRGB', cv2.UMat(np.array(PIL_image)))
+                # cv2.imshow('viewRGB', cv_image)
+                cv2.waitKey(1)
             except ...:
                 rospy.logerr('Could not convert from \'{msg.encoding}\' to \'bgr8\'.')
 

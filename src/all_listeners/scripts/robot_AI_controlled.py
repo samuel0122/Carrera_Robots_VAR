@@ -230,5 +230,5 @@ class Wander:
 if __name__ == '__main__':
     rospy.init_node('AI_robot_controlled')
 
-    wand = Wander('/home/samuel/Carrera_Robots_VAR/src/all_listeners/10LapsModels/modelAI_20-03-2023_16:01:09.h5')
+    wand = Wander('/home/samuel/Carrera_Robots_VAR/src/all_listeners/3LapsModels/modelAI_17-03-2023_21:12:41.h5')
     wand.simulateRobot()

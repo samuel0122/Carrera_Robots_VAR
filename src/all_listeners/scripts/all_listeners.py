@@ -39,7 +39,7 @@ class Wander:
             cv_image = CvBridge().imgmsg_to_cv2(msg, "bgr8")
             cv2.imshow('viewRGB', cv_image)
             print('Image CALLBACK')
-            cv2.waitKey(1)
+            cv2.waitKey(0)
         except ...:
             rospy.logerr('Could not convert from \'{msg.encoding}\' to \'bgr8\'.')
 
